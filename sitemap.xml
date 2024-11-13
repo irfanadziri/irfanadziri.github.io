@@ -15,7 +15,7 @@
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://irfanadziri.dev/articles</loc>
+  <loc>https://irfanadziri.dev/writeups</loc>
   <lastmod>2024-07-27T13:09:29+00:00</lastmod>
   <priority>0.80</priority>
 </url>
@@ -30,57 +30,57 @@
   <priority>0.80</priority>
 </url>
 <url>
-  <loc>https://irfanadziri.dev/articles/resolving-unresolved-tag-for-cloudformation-templates</loc>
+  <loc>https://irfanadziri.dev/writeups/resolving-unresolved-tag-for-cloudformation-templates</loc>
   <lastmod>2024-07-27T13:09:29+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://irfanadziri.dev/articles/aws-cloudformation-template-cheat-sheet</loc>
+  <loc>https://irfanadziri.dev/writeups/aws-cloudformation-template-cheat-sheet</loc>
   <lastmod>2024-07-27T13:09:29+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://irfanadziri.dev/articles/simple-cicd-implementation-of-next.js-project</loc>
+  <loc>https://irfanadziri.dev/writeups/simple-cicd-implementation-of-next.js-project</loc>
   <lastmod>2024-07-27T13:09:29+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://irfanadziri.dev/articles/automate-md-file-creation-with-template</loc>
+  <loc>https://irfanadziri.dev/writeups/automate-md-file-creation-with-template</loc>
   <lastmod>2024-07-27T13:09:29+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://irfanadziri.dev/articles/blocking-direct-ip-access-to-nginx</loc>
+  <loc>https://irfanadziri.dev/writeups/blocking-direct-ip-access-to-nginx</loc>
   <lastmod>2024-07-27T13:09:29+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://irfanadziri.dev/articles/understanding-the-difference-between-ssg-ssr-and-spa</loc>
+  <loc>https://irfanadziri.dev/writeups/understanding-the-difference-between-ssg-ssr-and-spa</loc>
   <lastmod>2024-07-27T13:09:29+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://irfanadziri.dev/articles/create-aws-iam-users-for-training</loc>
+  <loc>https://irfanadziri.dev/writeups/create-aws-iam-users-for-training</loc>
   <lastmod>2024-07-27T13:09:29+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://irfanadziri.dev/articles/basic-server-setup-for-beginner</loc>
+  <loc>https://irfanadziri.dev/writeups/basic-server-setup-for-beginner</loc>
   <lastmod>2024-07-27T13:09:29+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://irfanadziri.dev/articles/aws-architecture-design</loc>
+  <loc>https://irfanadziri.dev/writeups/aws-architecture-design</loc>
   <lastmod>2024-07-27T13:09:29+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://irfanadziri.dev/articles/automate-installation-in-windows</loc>
+  <loc>https://irfanadziri.dev/writeups/automate-installation-in-windows</loc>
   <lastmod>2024-07-27T13:09:29+00:00</lastmod>
   <priority>0.64</priority>
 </url>
 <url>
-  <loc>https://irfanadziri.dev/articles/using-diskpart-for-disk-cleanup</loc>
+  <loc>https://irfanadziri.dev/writeups/using-diskpart-for-disk-cleanup</loc>
   <lastmod>2024-07-27T13:09:29+00:00</lastmod>
   <priority>0.64</priority>
 </url>
