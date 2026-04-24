@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="en" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Simplifying Git authentication using credential helpers for HTTPS-cloned repositories, but with a catch."><meta name="theme-color" content="#0c0c0c"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><title>Simplifying Git Authentication with Credential Helpers — irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.14eF8cIR.js"></script><link rel="stylesheet" href="/_astro/_slug_.BC8UfKrE.css"><script type="module" src="/_astro/page.BrtTna5W.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body> <div id="vanta-bg" class="fixed inset-0 pointer-events-none" style="z-index:-20;opacity:0;transition:opacity 0.8s ease" data-astro-transition-persist="astro-n6ay7iuf-2"></div> <div id="vanta-overlay" class="fixed inset-0 pointer-events-none" style="z-index:-10;backdrop-filter:blur(2px);background:rgba(12,12,12,0);opacity:0" data-astro-transition-persist="astro-hpledfl6-3"></div>  <main class="max-w-2xl mx-auto px-6 pb-24"> <header class="sticky top-0 bg-background/60 backdrop-blur-sm z-10 pt-8 pb-5 mb-12 border-b border-border"> <button id="back-btn" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-accent transition-colors mb-4 cursor-pointer bg-transparent border-0 p-0"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <path d="M19 12H5M12 5l-7 7 7 7"></path> </svg>
+posts
+</button> <h1 class="text-2xl font-semibold text-foreground mb-3 leading-snug" data-pagefind-meta="title">Simplifying Git Authentication with Credential Helpers</h1> <div class="flex flex-wrap items-center gap-3"> <time class="text-sm text-muted">7 August 2024</time>  <span class="text-border">·</span> <span class="text-sm text-muted">2 min read</span>   <span class="text-border">·</span> <div class="flex flex-wrap gap-1.5"> <span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Development</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Security</span> </div>  </div> </header> <article class="prose prose-sm max-w-none" data-pagefind-body>  <p>Managing Git credentials can be a hassle if entering them every time there is interaction with a remote repository cloned via HTTPS. Thankfully, Git offers credential helpers to make this easier. Here’s how to use them:</p>
+<h3 id="1-store-credentials-permanently">1. Store Credentials Permanently</h3>
+<p>Use the following command to save credentials in a plain text file on the disk. This means no need to enter them again.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> config</span><span style="color:#79B8FF"> --global</span><span style="color:#9ECBFF"> credential.helper</span><span style="color:#9ECBFF"> store</span></span></code></pre>
+<h3 id="2-cache-credentials-temporarily">2. Cache Credentials Temporarily</h3>
+<p>This command caches credentials in memory for 15 minutes (default). It’s a safer option than storing them in plain text.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> config</span><span style="color:#79B8FF"> --global</span><span style="color:#9ECBFF"> credential.helper</span><span style="color:#9ECBFF"> cache</span></span></code></pre>
+<h3 id="3-extend-cache-duration">3. Extend Cache Duration</h3>
+<p>To cache credentials for a longer period, such as one hour, use this command:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> config</span><span style="color:#79B8FF"> --global</span><span style="color:#9ECBFF"> credential.helper</span><span style="color:#9ECBFF"> 'cache --timeout=3600'</span></span></code></pre>
+<p><strong>Note</strong>: These commands need to be used before the system is prompting for github credentials.</p>
+<h3 id="4-view-stored-credential">4. View Stored Credential</h3>
+<p>To view stored/cached credential, simply use this command:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">cat</span><span style="color:#9ECBFF"> ~/.git-credentials</span></span></code></pre>
+<p>Example output would be like this: <code>https://username:password@github.com</code></p>
+<h3 id="5-clear-stored-credential">5. Clear Stored Credential</h3>
+<p>To clear stored/cached credential, simply use this command:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">rm</span><span style="color:#9ECBFF"> ~/.git-credentials</span><span style="color:#6A737D"> # To remove saved credential on disk</span></span>
+<span class="line"><span style="color:#B392F0">git</span><span style="color:#9ECBFF"> credential-cache</span><span style="color:#9ECBFF"> exit</span><span style="color:#6A737D"> # To remove saved credential on memory by restarting the daemon</span></span></code></pre>
+<p><strong>⚠️ Warning</strong>: While using Git credential helpers can simplify the workflow, it is important to note that these methods are not the most secure. Storing credentials in plain text or caching them in memory can expose sensitive information. For enhanced security, consider cloning repositories using SSH or create fine-grained access token in GitHub.</p>
+<h3 id="conclusion">Conclusion</h3>
+<p>Using Git credential helpers can make the workflow smoother for repositories cloned via HTTPS. Choose <code>store</code> for simplicity, <code>cache</code> for better security, or extend the cache duration for longer sessions. For enhanced security and a seamless experience, consider using SSH keys.</p>  </article> </main>  <script type="module">let r=null;const a=e=>new Promise((o,n)=>{if(document.querySelector(`script[src="${e}"]`)){o();return}const t=document.createElement("script");t.src=e,t.onload=()=>o(),t.onerror=()=>n(),document.head.appendChild(t)}),s=async()=>{const e=document.getElementById("vanta-bg");if(!(!e||r))try{await a("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"),await a("https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.dots.min.js"),r=window.VANTA.DOTS({el:"#vanta-bg",mouseControls:!0,touchControls:!0,gyroControls:!0,color:6990720,color2:3355440,backgroundColor:789516,size:2.5,spacing:38,showLines:!1}),e.style.opacity="1"}catch{}};document.addEventListener("astro:page-load",async()=>{await s();const e=document.getElementById("vanta-overlay");if(!e)return;if(!!document.getElementById("hero")){let n;n=()=>{const t=Math.min(1,window.scrollY/window.innerHeight);e.style.opacity=String(t),e.style.background=`rgba(12,12,12,${t*.65})`},window.addEventListener("scroll",n,{passive:!0}),n(),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("scroll",n)},{once:!0})}else e.style.opacity="1",e.style.background="rgba(12,12,12,0.65)"});</script> </body></html> <script type="module">document.addEventListener("astro:page-load",()=>{document.getElementById("back-btn")?.addEventListener("click",()=>{history.length>1?history.back():window.location.href="/"})});</script>

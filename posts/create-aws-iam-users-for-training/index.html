@@ -1,0 +1,137 @@
+<!DOCTYPE html><html lang="en" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Configuring IAM users with tailored permissions using a Role-based Access Control (RBAC) model."><meta name="theme-color" content="#0c0c0c"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><title>Manage AWS Trainee Access with IAM User Setup — irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.14eF8cIR.js"></script><link rel="stylesheet" href="/_astro/_slug_.BC8UfKrE.css"><script type="module" src="/_astro/page.BrtTna5W.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body> <div id="vanta-bg" class="fixed inset-0 pointer-events-none" style="z-index:-20;opacity:0;transition:opacity 0.8s ease" data-astro-transition-persist="astro-n6ay7iuf-2"></div> <div id="vanta-overlay" class="fixed inset-0 pointer-events-none" style="z-index:-10;backdrop-filter:blur(2px);background:rgba(12,12,12,0);opacity:0" data-astro-transition-persist="astro-hpledfl6-3"></div>  <main class="max-w-2xl mx-auto px-6 pb-24"> <header class="sticky top-0 bg-background/60 backdrop-blur-sm z-10 pt-8 pb-5 mb-12 border-b border-border"> <button id="back-btn" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-accent transition-colors mb-4 cursor-pointer bg-transparent border-0 p-0"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <path d="M19 12H5M12 5l-7 7 7 7"></path> </svg>
+posts
+</button> <h1 class="text-2xl font-semibold text-foreground mb-3 leading-snug" data-pagefind-meta="title">Manage AWS Trainee Access with IAM User Setup</h1> <div class="flex flex-wrap items-center gap-3"> <time class="text-sm text-muted">19 March 2024</time>  <span class="text-border">·</span> <span class="text-sm text-muted">3 min read</span>   <span class="text-border">·</span> <div class="flex flex-wrap gap-1.5"> <span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">AWS</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Security</span> </div>  </div> </header> <article class="prose prose-sm max-w-none" data-pagefind-body>  <p>As a trainer, simplify your AWS training session and ensure a smooth start by pre-creating trainee accounts. Before following the steps in this tutorial, note the security consideration below, and ensure you have the following prerequisites:</p>
+<p>⚠️ <strong>Caution</strong>: By following this tutorial, you’ll provide your trainees access to your personal account’s EC2 resources. Please create a dedicated root account just for training purposes.</p>
+<p><strong>Pre-requisites</strong>:</p>
+<ul>
+<li>Root AWS account.</li>
+<li>Basic AWS IAM knowledge.</li>
+</ul>
+<p>This tutorial consist of two sections; IAM Configuration and Creating Users Using AWS CLI.</p>
+<h2 id="iam-configuration">IAM Configuration</h2>
+<ol>
+<li>In AWS console, navigate to IAM. Under Access Management menu, click on <strong>Policies</strong>.</li>
+<li>Click on <strong>Create policy</strong> and choose JSON in the policy editor.</li>
+<li>Paste this JSON; which defines the permissions for the trainees’ accounts:<sup><a href="#user-content-fn-1" id="user-content-fnref-1" data-footnote-ref="" aria-describedby="footnote-label">1</a></sup></li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "Version"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2012-10-17"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "Statement"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "Effect"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Allow"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "Action"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">        "ec2:Describe*"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "ec2:StartInstances"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "ec2:StopInstances"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "ec2:TerminateInstances"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "ec2:RunInstances"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "ec2-instance-connect:SendSSHPublicKey"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "ec2:CreateSecurityGroup"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "ec2:DeleteSecurityGroup"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "ec2:AuthorizeSecurityGroupIngress"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "iam:ChangePassword"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "cloudwatch:DescribeAlarms"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "cloudwatch:DescribeAlarmsForMetric"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "cloudwatch:ListMetrics"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "cloudwatch:GetMetricData"</span></span>
+<span class="line"><span style="color:#E1E4E8">      ],</span></span>
+<span class="line"><span style="color:#79B8FF">      "Resource"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"*"</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "Effect"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Allow"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "Action"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ec2:RunInstances"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "Resource"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"arn:aws:ec2:&#x3C;region>:&#x3C;account-id>:instance/*"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">      "Condition"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "StringEquals"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "ec2:InstanceType"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"t2.micro"</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#E1E4E8">    {</span></span>
+<span class="line"><span style="color:#79B8FF">      "Effect"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Deny"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "Action"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ec2:RunInstances"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "Resource"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"arn:aws:ec2:&#x3C;region>::image/*"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">      "Condition"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">        "StringNotEquals"</span><span style="color:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#79B8FF">          "ec2:ImageId"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ami-06c4be2792f419b7b"</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">      }</span></span>
+<span class="line"><span style="color:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#E1E4E8">  ]</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<ol start="4">
+<li>Click <strong>Next</strong>.</li>
+<li>Give the policy a name (e.g. ec2-trainee-policy), then click on <strong>Create policy</strong>.</li>
+<li>Once created, go back to IAM dashboard and click on <strong>User groups</strong> under Access Management menu.</li>
+<li>Click on <strong>Create group</strong>.</li>
+<li>Give the group a name (e.g. ec2-trainee-group) and search for policy created earlier under <strong>Attach permissions policies - Optional</strong> menu.</li>
+<li>Click on <strong>Create group</strong>.</li>
+</ol>
+<h2 id="creating-users-using-aws-cli">Creating Users Using AWS CLI</h2>
+<ol>
+<li>Click on CLI icon on navbar.</li>
+<li>Run this command and wait for it to finish<sup><a href="#user-content-fn-2" id="user-content-fnref-2" data-footnote-ref="" aria-describedby="footnote-label">2</a></sup>:</li>
+</ol>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="shell"><code><span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> {</span><span style="color:#B392F0">1..10}</span><span style="color:#E1E4E8">; </span><span style="color:#F97583">do</span></span>
+<span class="line"><span style="color:#B392F0">  aws</span><span style="color:#9ECBFF"> iam</span><span style="color:#9ECBFF"> create-user</span><span style="color:#79B8FF"> --user-name</span><span style="color:#9ECBFF"> trainee-user</span><span style="color:#E1E4E8">$i &#x26;&#x26;</span></span>
+<span class="line"><span style="color:#B392F0">  aws</span><span style="color:#9ECBFF"> iam</span><span style="color:#9ECBFF"> add-user-to-group</span><span style="color:#79B8FF"> --user-name</span><span style="color:#9ECBFF"> trainee-user</span><span style="color:#E1E4E8">$i </span><span style="color:#79B8FF">--group-name</span><span style="color:#9ECBFF"> ec2-trainee-group</span><span style="color:#E1E4E8"> &#x26;&#x26;</span></span>
+<span class="line"><span style="color:#B392F0">  aws</span><span style="color:#9ECBFF"> iam</span><span style="color:#9ECBFF"> create-login-profile</span><span style="color:#79B8FF"> --user-name</span><span style="color:#9ECBFF"> trainee-user</span><span style="color:#E1E4E8">$i </span><span style="color:#79B8FF">--password</span><span style="color:#9ECBFF"> myPwd@123</span><span style="color:#79B8FF"> --password-reset-required</span></span>
+<span class="line"><span style="color:#79B8FF">  echo</span><span style="color:#9ECBFF"> "-------------------------------------------------------------------------------------------------"</span></span>
+<span class="line"><span style="color:#F97583">done</span></span></code></pre>
+<ol start="3">
+<li>AWS will create new users with usernames ranging from <code>trainee-user1</code> until <code>trainee-user10</code>. The default password for all users will be <code>myPwd@123</code>. Make sure to record these credentials securely to distribute to your trainees later for AWS console login.</li>
+<li>Provide a sign-in url to trainees with their designated credentials to login here: <code>https://&#x3C;your-account-id>.signin.aws.amazon.com/console/</code>.</li>
+<li>AWS will prompt users to change their password after the first-time login.</li>
+</ol>
+<p><strong>Important notes</strong>:</p>
+<ul>
+<li>This tutorial assumes you want to restrict trainees to launching only instances with the <strong>Ubuntu Server 22.04 LTS (HVM)</strong> image and <strong>t2.micro</strong> instance type.</li>
+<li>This tutorial also does not prevent trainees from accessing instances launched by other trainees because it relies on a basic access control model. For more granular control and to isolate trainee resources, consider using Attribute-based Access Control (ABAC). You can find more information <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction_attribute-based-access-control.html">here</a> or read the setup tutorial <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_attribute-based-access-control.html">here</a>.</li>
+<li>To avoid unintended costs and prevent further usage, terminate all instances created by trainees after each training session and consider removing their IAM user accounts.</li>
+</ul>
+<section data-footnotes="" class="footnotes"><h2 class="sr-only" id="footnote-label">Footnotes</h2>
+<ol>
+<li id="user-content-fn-1">
+<p>Change the region and account id to yours respectively. <a href="#user-content-fnref-1" data-footnote-backref="" aria-label="Back to reference 1" class="data-footnote-backref">↩</a></p>
+</li>
+<li id="user-content-fn-2">
+<p>The number 10 is just an example. You may change based on how many trainees you have. The <strong>—user-name</strong>, <strong>—group-name</strong>, and <strong>—password</strong> are also changeable. <a href="#user-content-fnref-2" data-footnote-backref="" aria-label="Back to reference 2" class="data-footnote-backref">↩</a></p>
+</li>
+</ol>
+</section>  </article> </main>  <script type="module">let r=null;const a=e=>new Promise((o,n)=>{if(document.querySelector(`script[src="${e}"]`)){o();return}const t=document.createElement("script");t.src=e,t.onload=()=>o(),t.onerror=()=>n(),document.head.appendChild(t)}),s=async()=>{const e=document.getElementById("vanta-bg");if(!(!e||r))try{await a("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"),await a("https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.dots.min.js"),r=window.VANTA.DOTS({el:"#vanta-bg",mouseControls:!0,touchControls:!0,gyroControls:!0,color:6990720,color2:3355440,backgroundColor:789516,size:2.5,spacing:38,showLines:!1}),e.style.opacity="1"}catch{}};document.addEventListener("astro:page-load",async()=>{await s();const e=document.getElementById("vanta-overlay");if(!e)return;if(!!document.getElementById("hero")){let n;n=()=>{const t=Math.min(1,window.scrollY/window.innerHeight);e.style.opacity=String(t),e.style.background=`rgba(12,12,12,${t*.65})`},window.addEventListener("scroll",n,{passive:!0}),n(),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("scroll",n)},{once:!0})}else e.style.opacity="1",e.style.background="rgba(12,12,12,0.65)"});</script> </body></html> <script type="module">document.addEventListener("astro:page-load",()=>{document.getElementById("back-btn")?.addEventListener("click",()=>{history.length>1?history.back():window.location.href="/"})});</script>
