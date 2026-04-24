@@ -1,0 +1,155 @@
+<!DOCTYPE html><html lang="en" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Configuring web-app deployment using PM2 in EC2 utilizing launch template, and semi CI/CD implementation using S3."><meta name="theme-color" content="#0c0c0c"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><title>Web-App Deployment using PM2 in AWS — irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.BFfqj1ee.js"></script><link rel="stylesheet" href="/_astro/_slug_.T3re6ERj.css"><script type="module" src="/_astro/page.IvKoM_B8.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body> <div id="vanta-bg" class="fixed inset-0 pointer-events-none" style="z-index:-20;opacity:0;transition:opacity 0.8s ease" data-astro-transition-persist="astro-n6ay7iuf-2"></div> <div id="vanta-overlay" class="fixed inset-0 pointer-events-none" style="z-index:-10;backdrop-filter:blur(2px);background:rgba(12,12,12,0);opacity:0" data-astro-transition-persist="astro-hpledfl6-3"></div>  <main class="max-w-2xl mx-auto px-6 pb-24"> <header class="sticky top-0 bg-background/60 backdrop-blur-sm z-10 pt-8 pb-5 mb-12 border-b border-border"> <button id="back-btn" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-accent transition-colors mb-4 cursor-pointer bg-transparent border-0 p-0"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <path d="M19 12H5M12 5l-7 7 7 7"></path> </svg>
+writing
+</button> <h1 class="text-2xl font-semibold text-foreground mb-3 leading-snug" data-pagefind-meta="title">Web-App Deployment using PM2 in AWS</h1> <div class="flex flex-wrap items-center gap-3"> <time class="text-sm text-muted">20 August 2024</time>  <span class="text-border">·</span> <span class="text-sm text-muted">4 min read</span>   <span class="text-border">·</span> <div class="flex flex-wrap gap-1.5"> <span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">AWS</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Automation</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">DevOps</span> </div>  </div> </header> <article class="prose prose-sm max-w-none" data-pagefind-body>  <p>Deploying web applications on AWS EC2 instances is a common task for cloud engineers. However, ensuring that the deployment is seamless, automated, and manageable requires careful consideration of the tools and configurations used. This guide walks through the process of deploying a web application using PM2 on an AWS EC2 instance, leveraging a Launch Template for consistency and efficiency, and implementing a semi CI/CD pipeline using S3.</p>
+<h2 id="setting-up-the-ec2-launch-template">Setting Up the EC2 Launch Template</h2>
+<p>To streamline the creation of EC2 instances, an AWS Launch Template is used. This template specifies the instance type, AMI, security group, and user data script that configures the instance upon launch.</p>
+<p>Here’s the configuration for the Launch Template:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">LaunchTemplate</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  Type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"AWS::EC2::LaunchTemplate"</span></span>
+<span class="line"><span style="color:#85E89D">  Properties</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    LaunchTemplateData</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      InstanceType</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"c5a.large"</span><span style="color:#6A737D"> # Compute optimized instance with 2 vCPU and 4 GiB memory</span></span>
+<span class="line"><span style="color:#85E89D">      ImageId</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"ami-060e277c0d4cce553"</span><span style="color:#6A737D"> # Ubuntu 22.04 LTS image</span></span>
+<span class="line"><span style="color:#85E89D">      KeyName</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"&#x3C;keypair-name>"</span></span>
+<span class="line"><span style="color:#85E89D">      IamInstanceProfile</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        Name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"&#x3C;IAM-instance-profile-name>"</span></span>
+<span class="line"><span style="color:#85E89D">      SecurityGroupIds</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">"&#x3C;security-group-id>"</span></span>
+<span class="line"><span style="color:#85E89D">      UserData</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        Fn::Base64</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">          #!/bin/bash -l</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">          # Update package index</span></span>
+<span class="line"><span style="color:#9ECBFF">          apt update</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">          # Install necessary packages</span></span>
+<span class="line"><span style="color:#9ECBFF">          apt install -y nginx unzip curl</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">          # Install NVM (Node Version Manager)</span></span>
+<span class="line"><span style="color:#9ECBFF">          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash</span></span>
+<span class="line"><span style="color:#9ECBFF">          export NVM_DIR="$HOME/.nvm"</span></span>
+<span class="line"><span style="color:#9ECBFF">          [ -s "$NVM_DIR/nvm.sh" ] &#x26;&#x26; \. "$NVM_DIR/nvm.sh"</span></span>
+<span class="line"><span style="color:#9ECBFF">          [ -s "$NVM_DIR/bash_completion" ] &#x26;&#x26; \. "$NVM_DIR/bash_completion"</span></span>
+<span class="line"><span style="color:#9ECBFF">          nvm install --lts</span></span>
+<span class="line"><span style="color:#9ECBFF">          nvm use --lts</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">          # Install PM2 and Bun globally</span></span>
+<span class="line"><span style="color:#9ECBFF">          npm install -g pm2 bun</span></span>
+<span class="line"><span style="color:#9ECBFF">          pm2 startup systemd -u $USER --hp $HOME</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">          # Install AWS-CLI</span></span>
+<span class="line"><span style="color:#9ECBFF">          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"</span></span>
+<span class="line"><span style="color:#9ECBFF">          unzip awscliv2.zip</span></span>
+<span class="line"><span style="color:#9ECBFF">          ./aws/install</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">          # Variables</span></span>
+<span class="line"><span style="color:#9ECBFF">          S3_PATH="s3://&#x3C;bucket-name>"</span></span>
+<span class="line"><span style="color:#9ECBFF">          LOCAL_PATH="/home/ubuntu/&#x3C;bucket-name>"</span></span>
+<span class="line"><span style="color:#9ECBFF">          FILE_TO_CHECK="&#x3C;src-code-file>.zip"</span></span>
+<span class="line"><span style="color:#9ECBFF">          APP_NAME="&#x3C;app-name>"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">          # Wait for the source code to be available in S3</span></span>
+<span class="line"><span style="color:#9ECBFF">          while true; do</span></span>
+<span class="line"><span style="color:#9ECBFF">            aws s3 ls $S3_PATH/$FILE_TO_CHECK</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#x26;&#x26; break</span></span>
+<span class="line"><span style="color:#9ECBFF">            || echo "Waiting for source code to be available in S3..."</span></span>
+<span class="line"><span style="color:#9ECBFF">            &#x26;&#x26; sleep 300</span></span>
+<span class="line"><span style="color:#9ECBFF">          done</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">          # Sync source code from S3</span></span>
+<span class="line"><span style="color:#9ECBFF">          mkdir -p $LOCAL_PATH</span></span>
+<span class="line"><span style="color:#9ECBFF">          aws s3 sync $S3_PATH $LOCAL_PATH</span></span>
+<span class="line"><span style="color:#9ECBFF">          unzip $LOCAL_PATH/$FILE_TO_CHECK -d $LOCAL_PATH/</span></span>
+<span class="line"><span style="color:#9ECBFF">          rm $LOCAL_PATH/$FILE_TO_CHECK</span></span>
+<span class="line"><span style="color:#9ECBFF">          echo "Source code pulled from S3 to $LOCAL_PATH"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">          # Move source code to web directory</span></span>
+<span class="line"><span style="color:#9ECBFF">          mkdir -p /var/www/$APP_NAME</span></span>
+<span class="line"><span style="color:#9ECBFF">          mv $LOCAL_PATH/* /var/www/$APP_NAME/</span></span>
+<span class="line"><span style="color:#9ECBFF">          cd /var/www/$APP_NAME</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">          # Install dependencies and build the application</span></span>
+<span class="line"><span style="color:#9ECBFF">          bun install --frozen-lockfile</span></span>
+<span class="line"><span style="color:#9ECBFF">          bun run build</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">          # Start the application with PM2</span></span>
+<span class="line"><span style="color:#9ECBFF">          pm2 start ecosystem.config.cjs</span></span>
+<span class="line"><span style="color:#9ECBFF">          pm2 save</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">          # Configure Nginx</span></span>
+<span class="line"><span style="color:#9ECBFF">          cat > /etc/nginx/sites-available/$APP_NAME &#x3C;&#x3C;- EOF</span></span>
+<span class="line"><span style="color:#9ECBFF">          server {</span></span>
+<span class="line"><span style="color:#9ECBFF">              listen 80;</span></span>
+<span class="line"><span style="color:#9ECBFF">              server_name &#x3C;domain.com>;</span></span>
+<span class="line"><span style="color:#9ECBFF">              </span></span>
+<span class="line"><span style="color:#9ECBFF">              location / {</span></span>
+<span class="line"><span style="color:#9ECBFF">                  proxy_pass http://localhost:3000;</span></span>
+<span class="line"><span style="color:#9ECBFF">                  proxy_http_version 1.1;</span></span>
+<span class="line"><span style="color:#9ECBFF">                  proxy_set_header Upgrade \$http_upgrade;</span></span>
+<span class="line"><span style="color:#9ECBFF">                  proxy_set_header Connection 'upgrade';</span></span>
+<span class="line"><span style="color:#9ECBFF">                  proxy_set_header Host \$host;</span></span>
+<span class="line"><span style="color:#9ECBFF">                  proxy_cache_bypass \$http_upgrade;</span></span>
+<span class="line"><span style="color:#9ECBFF">              }</span></span>
+<span class="line"><span style="color:#9ECBFF">          }</span></span>
+<span class="line"><span style="color:#9ECBFF">          EOF</span></span>
+<span class="line"><span style="color:#9ECBFF">          ln -s /etc/nginx/sites-available/$APP_NAME /etc/nginx/sites-enabled/</span></span>
+<span class="line"><span style="color:#9ECBFF">          rm /etc/nginx/sites-enabled/default</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#9ECBFF">          # Restarting server</span></span>
+<span class="line"><span style="color:#9ECBFF">          systemctl restart nginx</span></span>
+<span class="line"><span style="color:#9ECBFF">          pm2 restart all</span></span></code></pre>
+<h3 id="explanation-and-pre-requisite">Explanation and pre-requisite</h3>
+<ul>
+<li><code>InstanceType</code> - <strong>c5a.large</strong> is chosen as instance for compute optimization, suitable for applications that need high processing power with cost-optimization in mind.</li>
+<li><code>ImageId</code> - The AMI used is <strong>Ubuntu 22.04 LTS</strong>, which provides long-term support and stability.</li>
+<li><code>SecurityGroupIds</code> - Ensure that security group configured allows traffic on the necessary ports, especially <strong>port 80</strong> for HTTP traffic.</li>
+<li><code>UserData</code> - This section automates the initial one-time setup for the instance. It <strong>installs necessary packages</strong> like Nginx, Node.js, PM2, and AWS CLI, sets up Nginx as a reverse proxy, and fetches the application code from S3.</li>
+<li><code>bun install &#x26;&#x26; bun run build</code> - This assumes that bun is used as the package manager for installing application dependencies. Alternatives like npm, yarn, etc. can also be used here.</li>
+<li>Ensure that <code>&#x3C;IAM-instance-profile-name></code> created has necessary permission to read from S3 bucket, specifically the permission of <code>s3:GetObject</code>.</li>
+<li>Ensure that <code>&#x3C;keypair-name></code>, <code>&#x3C;IAM-instance-profile-name></code>, <code>&#x3C;security-group-id></code>, <code>&#x3C;bucket-name></code>, <code>&#x3C;app-name></code>, and <code>&#x3C;domain.com></code> parameters are replaced with their respective values.</li>
+</ul>
+<h2 id="semi-cicd-implementation-using-s3">Semi CI/CD Implementation using S3</h2>
+<p>For a semi CI/CD approach, the application code is uploaded to an S3 bucket. The EC2 instance continuously checks the S3 bucket for the presence of the deployment package and deploys it once available. But to be safe, upload the compressed source-code in the S3 bucket first before launching an EC2 using this template. This method is useful for environments where a full CI/CD pipeline isn’t feasible or required.</p>
+<h2 id="disclaimer">Disclaimer</h2>
+<ul>
+<li><strong>CloudFormation</strong>: This template is written in YAML for deployment via CloudFormation. A solid understanding of CloudFormation is essential.</li>
+<li><strong>Non-Rapid Patching Environments</strong>: This solution is designed for applications that do not require rapid patching. It doesn’t fully integrate with a CI/CD pipeline but instead relies on an S3 bucket to store the source code. This approach is more manual and may not be ideal for high-frequency updates.</li>
+<li><strong>Auto Scaling Group (ASG) Considerations</strong>: Since this setup doesn’t use a golden image, which would typically contain a pre-configured environment, consider lowering the threshold of the ASG to reduce boot time. The reasoning behind not using a golden image is to ensure that the installed packages are always up to date.</li>
+</ul>
+<p>The original article was authored by Aerrata and sourced from <a href="https://aerrata.github.io/posts/deploy-nuxt-app-on-ubuntu-with-nginx/">here</a>.</p>  </article> </main>  <script type="module">let r=null;const a=e=>new Promise((o,n)=>{if(document.querySelector(`script[src="${e}"]`)){o();return}const t=document.createElement("script");t.src=e,t.onload=()=>o(),t.onerror=()=>n(),document.head.appendChild(t)}),s=async()=>{const e=document.getElementById("vanta-bg");if(!(!e||r))try{await a("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"),await a("https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.dots.min.js"),r=window.VANTA.DOTS({el:"#vanta-bg",mouseControls:!0,touchControls:!0,gyroControls:!0,color:6990720,color2:3355440,backgroundColor:789516,size:2.5,spacing:38,showLines:!1}),e.style.opacity="1"}catch{}};document.addEventListener("astro:page-load",async()=>{await s();const e=document.getElementById("vanta-overlay");if(!e)return;if(!!document.getElementById("hero")){let n;n=()=>{const t=Math.min(1,window.scrollY/window.innerHeight);e.style.opacity=String(t),e.style.background=`rgba(12,12,12,${t*.65})`},window.addEventListener("scroll",n,{passive:!0}),n(),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("scroll",n)},{once:!0})}else e.style.opacity="1",e.style.background="rgba(12,12,12,0.65)"});</script> </body></html> <script type="module">document.addEventListener("astro:page-load",()=>{document.getElementById("back-btn")?.addEventListener("click",()=>{history.length>1?history.back():window.location.href="/"})});</script>

@@ -1,0 +1,81 @@
+<!DOCTYPE html><html lang="en" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="Learn how to securely SSH into a private target server through a bastion host by forwarding private key using SSH agent forwarding, avoiding key exposure on the bastion host."><meta name="theme-color" content="#0c0c0c"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><title>Secure SSH Access Through a Bastion Host Without Storing the Private Key — irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.BFfqj1ee.js"></script><link rel="stylesheet" href="/_astro/_slug_.T3re6ERj.css"><script type="module" src="/_astro/page.IvKoM_B8.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body> <div id="vanta-bg" class="fixed inset-0 pointer-events-none" style="z-index:-20;opacity:0;transition:opacity 0.8s ease" data-astro-transition-persist="astro-n6ay7iuf-2"></div> <div id="vanta-overlay" class="fixed inset-0 pointer-events-none" style="z-index:-10;backdrop-filter:blur(2px);background:rgba(12,12,12,0);opacity:0" data-astro-transition-persist="astro-hpledfl6-3"></div>  <main class="max-w-2xl mx-auto px-6 pb-24"> <header class="sticky top-0 bg-background/60 backdrop-blur-sm z-10 pt-8 pb-5 mb-12 border-b border-border"> <button id="back-btn" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-accent transition-colors mb-4 cursor-pointer bg-transparent border-0 p-0"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <path d="M19 12H5M12 5l-7 7 7 7"></path> </svg>
+writing
+</button> <h1 class="text-2xl font-semibold text-foreground mb-3 leading-snug" data-pagefind-meta="title">Secure SSH Access Through a Bastion Host Without Storing the Private Key</h1> <div class="flex flex-wrap items-center gap-3"> <time class="text-sm text-muted">7 October 2024</time>  <span class="text-border">·</span> <span class="text-sm text-muted">2 min read</span>   <span class="text-border">·</span> <div class="flex flex-wrap gap-1.5"> <span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Security</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">DevOps</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Linux</span> </div>  </div> </header> <article class="prose prose-sm max-w-none" data-pagefind-body>  <p>It’s common to use a <strong>bastion host</strong> (or jump host) to SSH into private internal servers when working with secure infra environment. Some users may copy their private SSH key (<code>.pem</code> file) to the bastion host using <code>scp -i</code> for convenience, such as:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">scp</span><span style="color:#79B8FF"> -i</span><span style="color:#9ECBFF"> /path/to/private-key.pem</span><span style="color:#9ECBFF"> /path/to/private-key.pem</span><span style="color:#9ECBFF"> user@host-public-ip:~/</span></span></code></pre>
+<p>However, storing the key on the bastion host is not secure and increases the risk of key exposure to the public, moreover the bastion host is accessible publicly. A more secure approach is to use <strong>SSH agent forwarding</strong>, which allow users to forward the private key from local machine >> bastion >> target server, without ever storing the key on the bastion host.</p>
+<p>Here’s a simple step-by-step guide, securely forwarding <code>.pem</code> key:</p>
+<h2 id="step-1-load-the-private-key-on-local-machine">Step 1: Load the Private Key on Local Machine</h2>
+<ol>
+<li>
+<p>Open terminal on local machine.</p>
+</li>
+<li>
+<p>Add the private key to the SSH agent:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">ssh-add</span><span style="color:#9ECBFF"> /path/to/private-key.pem</span></span></code></pre>
+<ul>
+<li>Replace <code>/path/to/private-key.pem</code> with the correct file and path of private key.</li>
+</ul>
+</li>
+</ol>
+<p>This ensures the key is available for authentication in the next steps.</p>
+<h2 id="step-2-ssh-into-the-bastion-host-with-agent-forwarding">Step 2: SSH into the Bastion Host with Agent Forwarding</h2>
+<ol>
+<li>
+<p>Run this from local machine:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">ssh</span><span style="color:#79B8FF"> -i</span><span style="color:#9ECBFF"> /path/to/private-key.pem</span><span style="color:#79B8FF"> -A</span><span style="color:#9ECBFF"> user@bastion-host-public-ip</span></span></code></pre>
+<ul>
+<li>Replace <code>/path/to/private-key.pem</code> with the correct file and path of private key.</li>
+<li>Replace <code>user</code> with the correct username for the bastion host.</li>
+<li>Replace <code>bastion-host-public-ip</code> with the actual public IP of the bastion host.</li>
+</ul>
+</li>
+</ol>
+<p>By using the <code>-A</code> flag, the SSH agent is now forwarded to the bastion host, but the private key remains securely on local machine.</p>
+<h2 id="step-3-ssh-into-the-target-server-from-the-bastion-host">Step 3: SSH into the Target Server from the Bastion Host</h2>
+<ol>
+<li>
+<p>From the bastion host, run the command:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">ssh</span><span style="color:#9ECBFF"> user@target-server-private-ip</span></span></code></pre>
+<ul>
+<li>Replace <code>user</code> with the correct username for the target server.</li>
+<li>Replace <code>target-server-private-ip</code> with the actual private IP of the target server.</li>
+</ul>
+</li>
+</ol>
+<p>Since the SSH agent is forwarded, the bastion will use the local key for authentication with the target server, without needing the <code>.pem</code> file on the bastion host.</p>  </article> </main>  <script type="module">let r=null;const a=e=>new Promise((o,n)=>{if(document.querySelector(`script[src="${e}"]`)){o();return}const t=document.createElement("script");t.src=e,t.onload=()=>o(),t.onerror=()=>n(),document.head.appendChild(t)}),s=async()=>{const e=document.getElementById("vanta-bg");if(!(!e||r))try{await a("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"),await a("https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.dots.min.js"),r=window.VANTA.DOTS({el:"#vanta-bg",mouseControls:!0,touchControls:!0,gyroControls:!0,color:6990720,color2:3355440,backgroundColor:789516,size:2.5,spacing:38,showLines:!1}),e.style.opacity="1"}catch{}};document.addEventListener("astro:page-load",async()=>{await s();const e=document.getElementById("vanta-overlay");if(!e)return;if(!!document.getElementById("hero")){let n;n=()=>{const t=Math.min(1,window.scrollY/window.innerHeight);e.style.opacity=String(t),e.style.background=`rgba(12,12,12,${t*.65})`},window.addEventListener("scroll",n,{passive:!0}),n(),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("scroll",n)},{once:!0})}else e.style.opacity="1",e.style.background="rgba(12,12,12,0.65)"});</script> </body></html> <script type="module">document.addEventListener("astro:page-load",()=>{document.getElementById("back-btn")?.addEventListener("click",()=>{history.length>1?history.back():window.location.href="/"})});</script>

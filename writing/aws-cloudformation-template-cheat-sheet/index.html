@@ -1,0 +1,167 @@
+<!DOCTYPE html><html lang="en" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="AWS CloudFormation quick cheat sheet. Understand key components, get tips on avoiding common errors, and start with a basic example template."><meta name="theme-color" content="#0c0c0c"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><title>AWS CloudFormation Template Cheat Sheet — irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.BFfqj1ee.js"></script><link rel="stylesheet" href="/_astro/_slug_.T3re6ERj.css"><script type="module" src="/_astro/page.IvKoM_B8.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body> <div id="vanta-bg" class="fixed inset-0 pointer-events-none" style="z-index:-20;opacity:0;transition:opacity 0.8s ease" data-astro-transition-persist="astro-n6ay7iuf-2"></div> <div id="vanta-overlay" class="fixed inset-0 pointer-events-none" style="z-index:-10;backdrop-filter:blur(2px);background:rgba(12,12,12,0);opacity:0" data-astro-transition-persist="astro-hpledfl6-3"></div>  <main class="max-w-2xl mx-auto px-6 pb-24"> <header class="sticky top-0 bg-background/60 backdrop-blur-sm z-10 pt-8 pb-5 mb-12 border-b border-border"> <button id="back-btn" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-accent transition-colors mb-4 cursor-pointer bg-transparent border-0 p-0"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <path d="M19 12H5M12 5l-7 7 7 7"></path> </svg>
+writing
+</button> <h1 class="text-2xl font-semibold text-foreground mb-3 leading-snug" data-pagefind-meta="title">AWS CloudFormation Template Cheat Sheet</h1> <div class="flex flex-wrap items-center gap-3"> <time class="text-sm text-muted">24 June 2024</time>  <span class="text-border">·</span> <span class="text-sm text-muted">3 min read</span>   <span class="text-border">·</span> <div class="flex flex-wrap gap-1.5"> <span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">AWS</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">DevOps</span> </div>  </div> </header> <article class="prose prose-sm max-w-none" data-pagefind-body>  <p>AWS CloudFormation is a powerful tool that allows the definition of cloud infrastructure as code(IaC). This cheat sheet provides a quick reference for creating and managing CloudFormation templates in YAML format.</p>
+<p><strong>Note:</strong> CloudFormation templates can also be written in JSON.</p>
+<h2 id="1-basic-template-structure">1. Basic Template Structure</h2>
+<h3 id="main-template">Main Template</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">AWSTemplateFormatVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2010-09-09"</span></span>
+<span class="line"><span style="color:#85E89D">Description</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Main CloudFormation stacks</span><span style="color:#6A737D"> # Provide a meaningful description of your stack</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">Resources</span><span style="color:#E1E4E8">: </span><span style="color:#6A737D"># Define all resources needed for infrastructure deployment</span></span>
+<span class="line"><span style="color:#85E89D">  IAMStack</span><span style="color:#E1E4E8">: </span><span style="color:#6A737D"># Resource stack name</span></span>
+<span class="line"><span style="color:#85E89D">    Type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"AWS::CloudFormation::Stack"</span><span style="color:#6A737D"> # Specify the type of resource, in this case, a nested stack</span></span>
+<span class="line"><span style="color:#85E89D">    Properties</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      TemplateURL</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://s3.ap-southeast-1.amazonaws.com/&#x3C;bucket-name>/IAM-stack.yaml"</span><span style="color:#6A737D"> # URL to the nested stack template</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  VPCStack</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    Type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"AWS::CloudFormation::Stack"</span></span>
+<span class="line"><span style="color:#85E89D">    Properties</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      TemplateURL</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://s3.ap-southeast-1.amazonaws.com/&#x3C;bucket-name>/VPC-stack.yaml"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  EC2Stack</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    Type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"AWS::CloudFormation::Stack"</span></span>
+<span class="line"><span style="color:#85E89D">    Properties</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      TemplateURL</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"https://s3.ap-southeast-1.amazonaws.com/&#x3C;bucket-name>/EC2-stack.yaml"</span></span>
+<span class="line"><span style="color:#85E89D">      Parameters</span><span style="color:#E1E4E8">: </span><span style="color:#6A737D"># Parameters required by the EC2 stack</span></span>
+<span class="line"><span style="color:#85E89D">        SecurityGroupIds</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">!ImportValue</span><span style="color:#9ECBFF"> BastionSecurityGroup</span><span style="color:#6A737D"> # Import value from the output of another stack</span></span>
+<span class="line"><span style="color:#85E89D">        PublicSubnet1Id</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">!ImportValue</span><span style="color:#9ECBFF"> PublicSubnetId</span></span>
+<span class="line"><span style="color:#85E89D">        PublicSubnet2Id</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">!ImportValue</span><span style="color:#9ECBFF"> PrivateSubnetId</span></span></code></pre>
+<h3 id="stack-template">Stack Template</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">AWSTemplateFormatVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"2010-09-09"</span></span>
+<span class="line"><span style="color:#85E89D">Description</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">CloudFormation stack for infrastructure VPC</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">Resources</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  VPC</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    Type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"AWS::EC2::VPC"</span></span>
+<span class="line"><span style="color:#85E89D">    Properties</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      CidrBlock</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"10.0.0.0/16"</span><span style="color:#6A737D"> # Define the CIDR block for the VPC</span></span>
+<span class="line"><span style="color:#85E89D">      EnableDnsSupport</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#6A737D"> # Enable DNS support within the VPC</span></span>
+<span class="line"><span style="color:#85E89D">      EnableDnsHostnames</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#6A737D"> # Enable DNS hostnames within the VPC</span></span>
+<span class="line"><span style="color:#85E89D">      Tags</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">Key</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Name</span></span>
+<span class="line"><span style="color:#85E89D">          Value</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">myVPC</span><span style="color:#6A737D"> # Tag the VPC with a name</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  PublicSubnet</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    Type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"AWS::EC2::Subnet"</span></span>
+<span class="line"><span style="color:#85E89D">    Properties</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      VpcId</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">!Ref</span><span style="color:#9ECBFF"> VPC</span><span style="color:#6A737D"> # Reference the VPC resource created above</span></span>
+<span class="line"><span style="color:#85E89D">      CidrBlock</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"10.0.1.0/24"</span><span style="color:#6A737D"> # Define the CIDR block for the subnet</span></span>
+<span class="line"><span style="color:#85E89D">      AvailabilityZone</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ap-southeast-1a</span><span style="color:#6A737D"> # Specify the availability zone</span></span>
+<span class="line"><span style="color:#85E89D">      MapPublicIpOnLaunch</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span><span style="color:#6A737D"> # Automatically assign a public IP to instances launched in this subnet</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  PrivateSubnet</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    Type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"AWS::EC2::Subnet"</span></span>
+<span class="line"><span style="color:#85E89D">    Properties</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      VpcId</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">!Ref</span><span style="color:#9ECBFF"> VPC</span></span>
+<span class="line"><span style="color:#85E89D">      CidrBlock</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"10.0.2.0/24"</span></span>
+<span class="line"><span style="color:#85E89D">      AvailabilityZone</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ap-southeast-1b</span></span>
+<span class="line"><span style="color:#85E89D">      MapPublicIpOnLaunch</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">false</span><span style="color:#6A737D"> # No public IP assigned by default</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  IGW</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    Type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"AWS::EC2::InternetGateway"</span><span style="color:#6A737D"> # Create an Internet Gateway</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  BastionSecurityGroup</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    Type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"AWS::EC2::SecurityGroup"</span></span>
+<span class="line"><span style="color:#85E89D">    Properties</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      GroupDescription</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Allow SSH inbound traffic from all sources</span><span style="color:#6A737D"> # Description of the security group</span></span>
+<span class="line"><span style="color:#85E89D">      VpcId</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">!Ref</span><span style="color:#9ECBFF"> VPC</span></span>
+<span class="line"><span style="color:#85E89D">      SecurityGroupIngress</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">IpProtocol</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">tcp</span></span>
+<span class="line"><span style="color:#85E89D">          FromPort</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">22</span></span>
+<span class="line"><span style="color:#85E89D">          ToPort</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">22</span></span>
+<span class="line"><span style="color:#85E89D">          CidrIp</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"0.0.0.0/0"</span><span style="color:#6A737D"> # Allow SSH from any IP</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">Outputs</span><span style="color:#E1E4E8">: </span><span style="color:#6A737D"># Define outputs to be used in other stacks</span></span>
+<span class="line"><span style="color:#85E89D">  VPCId</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    Description</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"VPC ID"</span></span>
+<span class="line"><span style="color:#85E89D">    Value</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">!Ref</span><span style="color:#9ECBFF"> VPC</span></span>
+<span class="line"><span style="color:#85E89D">    Export</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      Name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"VPCId"</span><span style="color:#6A737D"> # Export the VPC ID for use in other stacks</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  PublicSubnetId</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    Description</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Public Subnet 1 ID"</span></span>
+<span class="line"><span style="color:#85E89D">    Value</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">!Ref</span><span style="color:#9ECBFF"> PublicSubnet</span></span>
+<span class="line"><span style="color:#85E89D">    Export</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      Name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"PublicSubnetId"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  PrivateSubnetId</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    Description</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Private Subnet 2 ID"</span></span>
+<span class="line"><span style="color:#85E89D">    Value</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">!Ref</span><span style="color:#9ECBFF"> PrivateSubnet</span></span>
+<span class="line"><span style="color:#85E89D">    Export</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      Name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"PrivateSubnetId"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">  BastionSecurityGroupId</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    Description</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Bastion Security Group ID"</span></span>
+<span class="line"><span style="color:#85E89D">    Value</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">!Ref</span><span style="color:#9ECBFF"> BastionSecurityGroup</span></span>
+<span class="line"><span style="color:#85E89D">    Export</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      Name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"BastionSecurityGroupId"</span></span></code></pre>
+<h2 id="2-parameters">2. Parameters</h2>
+<p>Parameters are used to customize templates.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">Parameters</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  InstanceType</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    Description</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"EC2 instance type"</span></span>
+<span class="line"><span style="color:#85E89D">    Type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">String</span></span>
+<span class="line"><span style="color:#85E89D">    Default</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">t2.micro</span></span>
+<span class="line"><span style="color:#85E89D">    AllowedValues</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">t2.micro</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">t2.small</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#9ECBFF">t2.medium</span></span>
+<span class="line"><span style="color:#85E89D">    ConstraintDescription</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Must be a valid EC2 instance type."</span></span></code></pre>
+<h2 id="3-outputs">3. Outputs</h2>
+<p>Outputs allow exporting values from one stack to be used in another.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">Outputs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  VPCId</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    Description</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"VPC ID"</span></span>
+<span class="line"><span style="color:#85E89D">    Value</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">!Ref</span><span style="color:#9ECBFF"> VPC</span></span>
+<span class="line"><span style="color:#85E89D">    Export</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      Name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"VPCId"</span></span></code></pre>
+<h2 id="4-common-errors-and-troubleshooting-tips">4. Common Errors and Troubleshooting Tips</h2>
+<ul>
+<li><strong>Syntax Errors</strong>: Always validate templates using the AWS CloudFormation console or CLI.</li>
+<li><strong>Resource Conflicts</strong>: Ensure unique names for resources to avoid conflicts.</li>
+<li><strong>Parameter Mismatch</strong>: Verify that parameter names and types match across templates.</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>Using CloudFormation to manage IaC can greatly simplify deployment and management tasks. Start experimenting with templates and see the benefits firsthand.</p>
+<h2 id="additional-resources">Additional Resources</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">AWS CloudFormation Documentation</a></li>
+<li><a href="https://aws.amazon.com/cloudformation/resources/templates/">AWS CloudFormation Sample Templates</a></li>
+</ul>
+<p><strong>Disclaimer</strong>: This example template is for educational purposes only and should not be copied for production use. It serves as a guide to understand the basic structure of a CloudFormation template.</p>  </article> </main>  <script type="module">let r=null;const a=e=>new Promise((o,n)=>{if(document.querySelector(`script[src="${e}"]`)){o();return}const t=document.createElement("script");t.src=e,t.onload=()=>o(),t.onerror=()=>n(),document.head.appendChild(t)}),s=async()=>{const e=document.getElementById("vanta-bg");if(!(!e||r))try{await a("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"),await a("https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.dots.min.js"),r=window.VANTA.DOTS({el:"#vanta-bg",mouseControls:!0,touchControls:!0,gyroControls:!0,color:6990720,color2:3355440,backgroundColor:789516,size:2.5,spacing:38,showLines:!1}),e.style.opacity="1"}catch{}};document.addEventListener("astro:page-load",async()=>{await s();const e=document.getElementById("vanta-overlay");if(!e)return;if(!!document.getElementById("hero")){let n;n=()=>{const t=Math.min(1,window.scrollY/window.innerHeight);e.style.opacity=String(t),e.style.background=`rgba(12,12,12,${t*.65})`},window.addEventListener("scroll",n,{passive:!0}),n(),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("scroll",n)},{once:!0})}else e.style.opacity="1",e.style.background="rgba(12,12,12,0.65)"});</script> </body></html> <script type="module">document.addEventListener("astro:page-load",()=>{document.getElementById("back-btn")?.addEventListener("click",()=>{history.length>1?history.back():window.location.href="/"})});</script>
