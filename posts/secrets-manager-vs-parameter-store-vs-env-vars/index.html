@@ -1,0 +1,218 @@
+<!DOCTYPE html><html lang="en" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="A practical guide to choosing between environment variables, SSM Parameter Store, and AWS Secrets Manager-- covering cost, rotation, audit, and the cases where each one is the wrong tool."><meta name="theme-color" content="#0c0c0c"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><title>AWS Secrets Manager vs Parameter Store vs Environment Variables: When to Use Which — irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.14eF8cIR.js"></script><link rel="stylesheet" href="/_astro/_slug_.ClgX1IQp.css"><script type="module" src="/_astro/page.BrtTna5W.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body> <div id="vanta-bg" class="fixed inset-0 pointer-events-none" style="z-index:-20;opacity:0;transition:opacity 0.8s ease" data-astro-transition-persist="astro-n6ay7iuf-2"></div> <div id="vanta-overlay" class="fixed inset-0 pointer-events-none" style="z-index:-10;backdrop-filter:blur(2px);background:rgba(12,12,12,0);opacity:0" data-astro-transition-persist="astro-hpledfl6-3"></div>  <main class="max-w-2xl mx-auto px-6 pb-24"> <header class="sticky top-0 bg-background/60 backdrop-blur-sm z-10 pt-8 pb-5 mb-12 border-b border-border"> <button id="back-btn" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-accent transition-colors mb-4 cursor-pointer bg-transparent border-0 p-0"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <path d="M19 12H5M12 5l-7 7 7 7"></path> </svg>
+posts
+</button> <h1 class="text-2xl font-semibold text-foreground mb-3 leading-snug" data-pagefind-meta="title">AWS Secrets Manager vs Parameter Store vs Environment Variables: When to Use Which</h1> <div class="flex flex-wrap items-center gap-3"> <time class="text-sm text-muted">26 January 2026</time>  <span class="text-border">·</span> <span class="text-sm text-muted">8 min read</span>   <span class="text-border">·</span> <div class="flex flex-wrap gap-1.5"> <span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">AWS</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Security</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">DevOps</span> </div>  </div> </header> <article class="prose prose-sm max-w-none" data-pagefind-body>  <p>Not every secret belongs in Secrets Manager, and not every config value belongs in an environment variable. The three options— environment variables, SSM Parameter Store, and AWS Secrets Manager sit at different points on a spectrum of cost, operational overhead, and capability. Picking the wrong one either costs more than necessary or leaves a gap in rotation and audit that becomes a compliance problem later.</p>
+<hr>
+<h2 id="environment-variables">Environment Variables</h2>
+<p>Environment variables are the path of least resistance. They’re supported everywhere— Lambda, ECS, EC2, containers, and local dev; which require no AWS setup. For non-sensitive configuration like port numbers, feature flags, log levels, or region identifiers, they’re often the right call.</p>
+<p>The problem starts when teams use them for secrets. Environment variables have several failure modes that make them unsuitable for sensitive values:</p>
+<ul>
+<li><strong>Console visibility</strong> - Lambda and ECS environment variables are visible in plain text in the AWS Console to anyone with read access to the resource</li>
+<li><strong>Log leakage</strong> - stack traces, debug output, and misconfigured loggers regularly print environment variables to CloudWatch</li>
+<li><strong>Process inspection</strong> - on EC2, any user with access to <code>/proc</code> can read environment variables of running processes</li>
+<li><strong>No rotation</strong> - changing a secret means redeploying the application, which creates a window between detection and remediation during incidents</li>
+<li><strong>No audit trail</strong> - there’s no record of who read the value or when</li>
+</ul>
+<h3 id="when-environment-variables-are-the-right-choice">When Environment Variables Are the Right Choice</h3>
+<ul>
+<li>Non-sensitive runtime config: <code>PORT=8080</code>, <code>LOG_LEVEL=info</code>, <code>AWS_REGION=ap-southeast-5</code></li>
+<li>Local development, where values in a <code>.env</code> file (never committed) are acceptable</li>
+<li>Feature flags that carry no security consequence if exposed</li>
+</ul>
+<p>If the value would cause harm if leaked— a database password, an API key, a private certificate, then it does not belong in an environment variable.</p>
+<hr>
+<h2 id="ssm-parameter-store">SSM Parameter Store</h2>
+<p>SSM Parameter Store is a key-value store with two tiers and two value types.</p>
+<p><strong>Tiers:</strong></p>
+<ul>
+<li><strong>Standard</strong> - free, up to 10,000 parameters, max 4 KB per value</li>
+<li><strong>Advanced</strong> - paid per 10,000 API calls, up to 100,000 parameters, 8 KB per value, supports parameter policies (expiry, notification)</li>
+</ul>
+<p><strong>Value types:</strong></p>
+<ul>
+<li><strong>String</strong> - plain text, unencrypted</li>
+<li><strong>StringList</strong> - comma-separated plain text values</li>
+<li><strong>SecureString</strong> - encrypted with KMS (uses <code>aws/ssm</code> key by default, or a customer-managed key)</li>
+</ul>
+<p>The hierarchical naming convention is Parameter Store’s most useful feature for managing config across environments:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>/myapp/production/db-password</span></span>
+<span class="line"><span>/myapp/production/api-key</span></span>
+<span class="line"><span>/myapp/staging/db-password</span></span>
+<span class="line"><span>/myapp/staging/api-key</span></span></code></pre>
+<p>IAM policies can grant access to an entire path prefix (<code>/myapp/production/*</code>), so a production Lambda only has access to production parameters. Access is logged in CloudTrail, giving an audit trail of who retrieved what and when.</p>
+<h3 id="what-parameter-store-doesnt-do">What Parameter Store Doesn’t Do</h3>
+<p>Parameter Store has no built-in secret rotation. A <code>SecureString</code> parameter is encrypted at rest and access-controlled, but nothing in AWS will automatically rotate it and update the downstream application. Rotation is a manual process or something you build yourself with a Lambda and a scheduled EventBridge rule.</p>
+<p>Cross-account access is also limited. Parameter Store doesn’t support resource-based policies, so sharing a parameter with another AWS account requires IAM role assumption— workable, but not clean.</p>
+<h3 id="when-parameter-store-is-the-right-choice">When Parameter Store Is the Right Choice</h3>
+<ul>
+<li>Per-environment configuration that needs central management: database hostnames, queue URLs, feature flag values, internal endpoints</li>
+<li>Secrets that are sensitive but don’t need automatic rotation— an API key that rarely changes, a third-party service token that you rotate manually on a known schedule</li>
+<li>High-volume secret reads where cost matters— Parameter Store Standard is free; Secrets Manager charges per secret per month regardless of read volume</li>
+<li>Teams with a low secret count who want central management without paying for Secrets Manager</li>
+</ul>
+<hr>
+<h2 id="aws-secrets-manager">AWS Secrets Manager</h2>
+<p>Secrets Manager is purpose-built for secrets that need to rotate. The core capability that distinguishes it from Parameter Store is automatic rotation: Secrets Manager can invoke a Lambda function on a schedule to generate a new secret value, update the downstream resource (an RDS database, a Redshift cluster, a Documentdb instance), and swap the active version— all without application downtime, using staging labels (<code>AWSCURRENT</code>, <code>AWSPENDING</code>, <code>AWSPREVIOUS</code>) to manage the transition.</p>
+<p>AWS provides managed rotation Lambda functions for several services out of the box: RDS MySQL, RDS PostgreSQL, RDS Oracle, RDS SQL Server, Amazon Redshift, and Amazon DocumentDB. For other secret types, you write a custom rotation Lambda.</p>
+<p><strong>Cost:</strong></p>
+<ul>
+<li>$0.40 per secret per month</li>
+<li>$0.05 per 10,000 API calls</li>
+</ul>
+<p>Ten secrets cost $4/month before API call charges. At scale — hundreds of secrets — this adds up. For secrets that genuinely need rotation, it’s worth it. For static config values that rarely change, it’s waste.</p>
+<h3 id="cross-account-access">Cross-Account Access</h3>
+<p>Unlike Parameter Store, Secrets Manager supports resource-based policies. A secret in Account A can grant access directly to a role in Account B without the consuming account needing to assume a role across the boundary first. This makes Secrets Manager the cleaner option when secrets need to be shared across AWS accounts.</p>
+<h3 id="versioning">Versioning</h3>
+<p>Every update to a secret creates a new version. Secrets Manager tracks versions with staging labels:</p>
+<ul>
+<li><code>AWSCURRENT</code> - the version currently in use</li>
+<li><code>AWSPENDING</code> - the version being rotated in (during rotation)</li>
+<li><code>AWSPREVIOUS</code> - the last active version, retained for rollback</li>
+</ul>
+<p>Applications that retrieve the secret by name always get <code>AWSCURRENT</code>. If rotation produces a bad value, the previous version is still available.</p>
+<h3 id="when-secrets-manager-is-the-right-choice">When Secrets Manager Is the Right Choice</h3>
+<ul>
+<li>Database credentials on RDS, Redshift, or DocumentDB— the managed rotation integration is the primary reason Secrets Manager exists</li>
+<li>Any secret with a compliance requirement for automatic rotation (PCI-DSS, SOC 2, ISO 27001 all ask about rotation)</li>
+<li>Secrets shared across multiple AWS accounts via resource-based policies</li>
+<li>API keys or tokens that must rotate on a defined schedule without manual intervention</li>
+</ul>
+<hr>
+<h2 id="side-by-side-comparison">Side-by-Side Comparison</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Dimension</th><th>Environment Variables</th><th>Parameter Store (SecureString)</th><th>Secrets Manager</th></tr></thead><tbody><tr><td><strong>Cost</strong></td><td>Free</td><td>Free (Standard tier)</td><td>$0.40/secret/month + API calls</td></tr><tr><td><strong>Encryption at rest</strong></td><td>No</td><td>Yes (KMS)</td><td>Yes (KMS)</td></tr><tr><td><strong>Audit trail</strong></td><td>No</td><td>CloudTrail</td><td>CloudTrail</td></tr><tr><td><strong>Automatic rotation</strong></td><td>No</td><td>No</td><td>Yes (built-in for RDS, custom Lambda)</td></tr><tr><td><strong>Versioning</strong></td><td>No</td><td>No (Advanced tier: parameter policy)</td><td>Yes (AWSCURRENT/AWSPENDING/AWSPREVIOUS)</td></tr><tr><td><strong>Cross-account sharing</strong></td><td>N/A</td><td>Role assumption only</td><td>Resource-based policy</td></tr><tr><td><strong>Console visibility</strong></td><td>Plain text</td><td>Masked (SecureString)</td><td>Masked</td></tr><tr><td><strong>Right for</strong></td><td>Non-sensitive config, local dev</td><td>Static secrets, per-env config</td><td>Rotating credentials, compliance</td></tr></tbody></table>
+<hr>
+<h2 id="decision-framework">Decision Framework</h2>
+<p><strong>Does the value contain anything sensitive (password, token, key)?</strong></p>
+<ul>
+<li>No → environment variable or Parameter Store String. Done.</li>
+<li>Yes → continue.</li>
+</ul>
+<p><strong>Does it need to rotate automatically?</strong></p>
+<ul>
+<li>Yes → Secrets Manager.</li>
+<li>No → continue.</li>
+</ul>
+<p><strong>Does it need to be shared across AWS accounts?</strong></p>
+<ul>
+<li>Yes → Secrets Manager (resource-based policy).</li>
+<li>No → continue.</li>
+</ul>
+<p><strong>How many secrets, and how often are they read?</strong></p>
+<ul>
+<li>Few secrets, low read volume → either works; Secrets Manager if budget allows.</li>
+<li>Many secrets or high read volume → Parameter Store SecureString (free tier, no per-secret charge).</li>
+</ul>
+<p><strong>Is there a compliance requirement for rotation audit?</strong></p>
+<ul>
+<li>Yes → Secrets Manager.</li>
+<li>No → Parameter Store SecureString is sufficient.</li>
+</ul>
+<hr>
+<h2 id="a-common-mistake">A Common Mistake</h2>
+<p>Storing database passwords as Lambda environment variables is the most common mistake. It works until the password needs to change— then it’s a redeployment. It works until someone with Lambda console access reads the value. It works until a misconfigured logger writes the environment to CloudWatch.</p>
+<p>Database credentials belong in Secrets Manager if they need to rotate, or Parameter Store SecureString if rotation is manual and infrequent. The Lambda retrieves the secret at runtime via the SDK, not from an environment variable. The cost is a few hundred milliseconds on cold start, which is almost always worth the trade.</p>
+<hr>
+<h2 id="closing-thoughts">Closing Thoughts</h2>
+<p>The practical split: environment variables for non-sensitive config, Parameter Store SecureString for sensitive values that don’t rotate, Secrets Manager for credentials that must rotate or cross account boundaries. The upgrade path is one-way— once compliance asks for rotation audit trails, Parameter Store can’t retrofit that. Starting with Secrets Manager for database credentials from the beginning avoids that migration later.</p>
+<hr>
+<h3 id="further-reading">Further Reading</h3>
+<ul>
+<li><a href="https://aws.amazon.com/secrets-manager/pricing/">AWS Secrets Manager pricing</a> — current per-secret and API call rates by region</li>
+<li><a href="https://aws.amazon.com/systems-manager/pricing/">SSM Parameter Store pricing</a> — Standard vs Advanced tier limits and costs</li>
+<li><a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets-rds.html">Secrets Manager rotation for RDS</a> — how the managed rotation Lambda works for RDS engines</li>
+<li><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/ps-integration-lambda-extensions.html">Using Parameter Store parameters in Lambda</a> — the Lambda extension that caches Parameter Store values locally to reduce API call volume</li>
+</ul>  </article> </main>  <script type="module">let r=null;const a=e=>new Promise((o,n)=>{if(document.querySelector(`script[src="${e}"]`)){o();return}const t=document.createElement("script");t.src=e,t.onload=()=>o(),t.onerror=()=>n(),document.head.appendChild(t)}),s=async()=>{const e=document.getElementById("vanta-bg");if(!(!e||r))try{await a("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"),await a("https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.dots.min.js"),r=window.VANTA.DOTS({el:"#vanta-bg",mouseControls:!0,touchControls:!0,gyroControls:!0,color:6990720,color2:3355440,backgroundColor:789516,size:2.5,spacing:38,showLines:!1}),e.style.opacity="1"}catch{}};document.addEventListener("astro:page-load",async()=>{await s();const e=document.getElementById("vanta-overlay");if(!e)return;if(!!document.getElementById("hero")){let n;n=()=>{const t=Math.min(1,window.scrollY/window.innerHeight);e.style.opacity=String(t),e.style.background=`rgba(12,12,12,${t*.65})`},window.addEventListener("scroll",n,{passive:!0}),n(),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("scroll",n)},{once:!0})}else e.style.opacity="1",e.style.background="rgba(12,12,12,0.65)"});</script> </body></html> <script type="module">document.addEventListener("astro:page-load",()=>{document.getElementById("back-btn")?.addEventListener("click",()=>{history.length>1?history.back():window.location.href="/"})});</script>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="A practical walkthrough of the three foundational decisions in a production-grade VPC: the public/private subnet pattern, NAT strategy tradeoffs, and where to place ALB."><meta name="theme-color" content="#0c0c0c"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><title>E2E IaC for Multi-AZ Production VPC — irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.14eF8cIR.js"></script><link rel="stylesheet" href="/_astro/_slug_.BC8UfKrE.css"><script type="module" src="/_astro/page.BrtTna5W.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
+<!DOCTYPE html><html lang="en" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="A practical walkthrough of the three foundational decisions in a production-grade VPC: the public/private subnet pattern, NAT strategy tradeoffs, and where to place ALB."><meta name="theme-color" content="#0c0c0c"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><title>E2E IaC for Multi-AZ Production VPC — irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.14eF8cIR.js"></script><link rel="stylesheet" href="/_astro/_slug_.ClgX1IQp.css"><script type="module" src="/_astro/page.BrtTna5W.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
 	animation-duration: 0.2s;
 	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
 	animation-fill-mode: both;
@@ -36,7 +36,7 @@
 	animation-fill-mode: both;
 	animation-name: astroFadeIn; }</style></head> <body> <div id="vanta-bg" class="fixed inset-0 pointer-events-none" style="z-index:-20;opacity:0;transition:opacity 0.8s ease" data-astro-transition-persist="astro-n6ay7iuf-2"></div> <div id="vanta-overlay" class="fixed inset-0 pointer-events-none" style="z-index:-10;backdrop-filter:blur(2px);background:rgba(12,12,12,0);opacity:0" data-astro-transition-persist="astro-hpledfl6-3"></div>  <main class="max-w-2xl mx-auto px-6 pb-24"> <header class="sticky top-0 bg-background/60 backdrop-blur-sm z-10 pt-8 pb-5 mb-12 border-b border-border"> <button id="back-btn" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-accent transition-colors mb-4 cursor-pointer bg-transparent border-0 p-0"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <path d="M19 12H5M12 5l-7 7 7 7"></path> </svg>
 posts
-</button> <h1 class="text-2xl font-semibold text-foreground mb-3 leading-snug" data-pagefind-meta="title">E2E IaC for Multi-AZ Production VPC</h1> <div class="flex flex-wrap items-center gap-3"> <time class="text-sm text-muted">24 July 2025</time>  <span class="text-border">·</span> <span class="text-sm text-muted">8 min read</span>   <span class="text-border">·</span> <div class="flex flex-wrap gap-1.5"> <span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">AWS</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">IaC</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Networking</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">DevOps</span> </div>  </div> </header> <article class="prose prose-sm max-w-none" data-pagefind-body>  <p>Spinning up a VPC is a few clicks in the console. Building one that survives production traffic, a security audit, and a cost review six months later is a different problem entirely. This article focuses on the three structural decisions that determine everything else: (1) how to split public and private subnets, (2) how to handle outbound internet for private resources, and (3) where the load balancer sits.</p>
+</button> <h1 class="text-2xl font-semibold text-foreground mb-3 leading-snug" data-pagefind-meta="title">E2E IaC for Multi-AZ Production VPC</h1> <div class="flex flex-wrap items-center gap-3"> <time class="text-sm text-muted">24 July 2025</time>  <span class="text-border">·</span> <span class="text-sm text-muted">11 min read</span>   <span class="text-border">·</span> <div class="flex flex-wrap gap-1.5"> <span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">AWS</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">IaC</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Networking</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">DevOps</span> </div>  </div> </header> <article class="prose prose-sm max-w-none" data-pagefind-body>  <p>Spinning up a VPC is a few clicks in the console. Building one that survives production traffic, a security audit, and a cost review six months later is a different problem entirely. This article focuses on the three structural decisions that determine everything else: (1) how to split public and private subnets, (2) how to handle outbound internet for private resources, and (3) where the load balancer sits.</p>
 <p>All examples use Terraform, but the logic applies equally to CloudFormation, CDK, or Pulumi.</p>
 <hr>
 <h2 id="1-publicprivate-subnet-pattern">1. Public/Private Subnet Pattern</h2>
@@ -140,7 +140,7 @@ posts
 <span class="line"><span>  10.0.100.0/24 — reserved for future database subnet tier</span></span></code></pre>
 <hr>
 <h2 id="2-nat-strategy-tradeoffs">2. NAT Strategy Tradeoffs</h2>
-<p>Private subnet resources that need outbound internet access (pulling packages, calling external APIs, reaching AWS services without VPC endpoints) require a path out. There are three options, each with a different cost and availability profile.</p>
+<p>Private subnet resources that need outbound internet access (pulling packages, calling external APIs, reaching AWS services without VPC endpoints) require a path out. There are three options (at least in my knowledge), each with a different cost and availability profile.</p>
 <h3 id="option-a-nat-gateway-managed">Option A: NAT Gateway (Managed)</h3>
 <p>The standard choice for production. AWS manages the NAT device, it scales automatically, and it is highly available within a single AZ.</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="hcl"><code><span class="line"><span style="color:#B392F0">resource</span><span style="color:#79B8FF"> "aws_eip"</span><span style="color:#79B8FF"> "nat"</span><span style="color:#E1E4E8"> {</span></span>
@@ -178,9 +178,9 @@ posts
 <span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
 <p>The <code>fck-nat</code> project provides a maintained ARM64 AMI with HA support via an Auto Scaling group of size 1. For low-traffic environments or cost-sensitive workloads, a <code>t4g.nano</code> NAT instance at ~$3/month is hard to argue against.</p>
 <p><strong>When to use:</strong> Dev/staging environments, workloads with low egress volume, teams with the operational capacity to manage it.</p>
-<p><strong>When not to use:</strong> High-throughput production workloads where NAT instance bandwidth caps become a bottleneck.</p>
+<p><strong>When not to use:</strong> High-throughput production workloads where NAT instance bandwidth caps (constrained by instance size) become a bottleneck.</p>
 <h3 id="option-c-vpc-endpoints-avoid-nat-entirely">Option C: VPC Endpoints (Avoid NAT Entirely)</h3>
-<p>For AWS service traffic, a VPC endpoint eliminates the NAT Gateway entirely. Gateway endpoints for S3 and DynamoDB are free. Interface endpoints for other services cost ~$0.01/hour per AZ but are cheaper than NAT Gateway data charges at volume.</p>
+<p>For AWS service traffic, a VPC endpoint eliminates the NAT Gateway entirely. Gateway endpoints for S3 and DynamoDB are free. Interface endpoints for other services (SSM, Secrets Manager, ECR, SQS, etc.) cost ~$0.01/hour per AZ but are cheaper than NAT Gateway data charges at volume.</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="hcl"><code><span class="line"><span style="color:#6A737D"># Free — no per-GB charge, no hourly charge</span></span>
 <span class="line"><span style="color:#B392F0">resource</span><span style="color:#79B8FF"> "aws_vpc_endpoint"</span><span style="color:#79B8FF"> "s3"</span><span style="color:#E1E4E8"> {</span></span>
 <span class="line"><span style="color:#E1E4E8">  vpc_id</span><span style="color:#F97583">            =</span><span style="color:#E1E4E8"> aws_vpc</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">main</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">id</span></span>
@@ -198,7 +198,7 @@ posts
 <span class="line"><span style="color:#E1E4E8">  security_group_ids</span><span style="color:#F97583">  =</span><span style="color:#E1E4E8"> [aws_security_group</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">vpc_endpoints</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">id]</span></span>
 <span class="line"><span style="color:#E1E4E8">  private_dns_enabled</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> true</span></span>
 <span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
-<p><strong>Practical recommendation:</strong> Deploy gateway endpoints for S3 and DynamoDB unconditionally — they cost nothing and reduce NAT Gateway data processing charges immediately.</p>
+<p><strong>Practical recommendation:</strong> Deploy gateway endpoints for S3 and DynamoDB unconditionally — they cost nothing and reduce NAT Gateway data processing charges immediately. Evaluate interface endpoints for any service that generates significant traffic through the NAT Gateway (audit the <code>BytesProcessed</code> CloudWatch metric on the NAT Gateways after a week of production traffic).</p>
 <h3 id="decision-matrix">Decision Matrix</h3>
 
 
@@ -232,7 +232,7 @@ posts
 <table><thead><tr><th>Scenario</th><th>Recommended NAT Strategy</th></tr></thead><tbody><tr><td>Production, high availability required</td><td>NAT Gateway, one per AZ</td></tr><tr><td>Production, cost is a constraint</td><td>NAT Gateway for critical paths + VPC endpoints for AWS services</td></tr><tr><td>Dev/staging, low traffic</td><td>Single NAT Gateway or fck-nat instance</td></tr><tr><td>Workloads that only call AWS services</td><td>VPC endpoints only, no NAT needed</td></tr><tr><td>Egress-heavy (video, large payloads)</td><td>NAT Gateway + audit with Cost Explorer</td></tr></tbody></table>
 <hr>
 <h2 id="3-alb-placement-public-vs-private">3. ALB Placement: Public vs Private</h2>
-<p>The Application Load Balancer sits at the entry point of the request path. Where it is placed determines who can reach the application and how traffic flows through the VPC.</p>
+<p>The Application Load Balancer sits at the entry point of the request path. Where it placed determines who can reach the application and how traffic flows through the VPC.</p>
 <h3 id="internet-facing-alb-public-subnets">Internet-Facing ALB (Public Subnets)</h3>
 <p>The standard pattern for any application serving external users. The ALB receives a public DNS name and public IP addresses, sits in the public subnets, and forwards to targets in private subnets.</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="hcl"><code><span class="line"><span style="color:#B392F0">resource</span><span style="color:#79B8FF"> "aws_lb"</span><span style="color:#79B8FF"> "public"</span><span style="color:#E1E4E8"> {</span></span>
@@ -270,7 +270,7 @@ posts
 <span class="line"><span style="color:#E1E4E8">    security_groups</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [aws_security_group</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">app</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">id]</span></span>
 <span class="line"><span style="color:#E1E4E8">  }</span></span>
 <span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
-<p>The app security group should allow inbound <strong>only from the ALB security group</strong>, not from <code>0.0.0.0/0</code>:</p>
+<p>The target group points at instances or ECS tasks in private subnets. The app security group should allow inbound <strong>only from the ALB security group</strong>, not from <code>0.0.0.0/0</code>:</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="hcl"><code><span class="line"><span style="color:#B392F0">resource</span><span style="color:#79B8FF"> "aws_security_group_rule"</span><span style="color:#79B8FF"> "app_from_alb"</span><span style="color:#E1E4E8"> {</span></span>
 <span class="line"><span style="color:#E1E4E8">  type</span><span style="color:#F97583">                     =</span><span style="color:#9ECBFF"> "ingress"</span></span>
 <span class="line"><span style="color:#E1E4E8">  from_port</span><span style="color:#F97583">                =</span><span style="color:#79B8FF"> 8080</span></span>
@@ -279,8 +279,14 @@ posts
 <span class="line"><span style="color:#E1E4E8">  source_security_group_id</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> aws_security_group</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">alb_public</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">id</span></span>
 <span class="line"><span style="color:#E1E4E8">  security_group_id</span><span style="color:#F97583">        =</span><span style="color:#E1E4E8"> aws_security_group</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">app</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">id</span></span>
 <span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>This means an attacker who discovers the EC2 instance IP cannot bypass the ALB — the security group will drop any connection not sourced from the ALB.</p>
 <h3 id="internal-alb-private-subnets">Internal ALB (Private Subnets)</h3>
-<p>An internal ALB (<code>internal = true</code>) receives only a private DNS name and is reachable only within the VPC. Use this for service-to-service communication, internal APIs, or a second-tier load balancer in a layered architecture.</p>
+<p>An internal ALB (<code>internal = true</code>) receives only a private DNS name and is reachable only within the VPC (or connected networks via VPN/Direct Connect). Use this for:</p>
+<ul>
+<li>Service-to-service communication between microservices</li>
+<li>APIs consumed only by other internal systems</li>
+<li>A second-tier load balancer in a layered architecture (external ALB → internal ALB → service)</li>
+</ul>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="hcl"><code><span class="line"><span style="color:#B392F0">resource</span><span style="color:#79B8FF"> "aws_lb"</span><span style="color:#79B8FF"> "internal"</span><span style="color:#E1E4E8"> {</span></span>
 <span class="line"><span style="color:#E1E4E8">  name</span><span style="color:#F97583">               =</span><span style="color:#9ECBFF"> "app-alb-internal"</span></span>
 <span class="line"><span style="color:#E1E4E8">  internal</span><span style="color:#F97583">           =</span><span style="color:#79B8FF"> true</span></span>
@@ -288,7 +294,23 @@ posts
 <span class="line"><span style="color:#E1E4E8">  security_groups</span><span style="color:#F97583">    =</span><span style="color:#E1E4E8"> [aws_security_group</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">alb_internal</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">id]</span></span>
 <span class="line"><span style="color:#E1E4E8">  subnets</span><span style="color:#F97583">            =</span><span style="color:#E1E4E8"> aws_subnet</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">private[</span><span style="color:#F97583">*</span><span style="color:#E1E4E8">]</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">id</span></span>
 <span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>The internal ALB lives in private subnets. Its security group allows inbound from whatever sources are legitimate callers (other security groups, specific CIDR ranges from connected networks).</p>
+<h3 id="layered-pattern-public-alb--internal-alb">Layered Pattern: Public ALB + Internal ALB</h3>
+<p>For applications with a public frontend and internal microservices, a two-tier ALB pattern isolates the trust boundaries cleanly:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Internet</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>Public ALB (public subnets, SG: allow 443 from 0.0.0.0/0)</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>Frontend EC2/ECS (private subnets, SG: allow from public ALB only)</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>Internal ALB (private subnets, SG: allow from frontend SG only)</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>Backend services (private subnets, SG: allow from internal ALB only)</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>RDS (private subnets, SG: allow from backend SG only)</span></span></code></pre>
+<p>Each hop enforces its own security group rule. Lateral movement requires compromising each layer’s security group in sequence.</p>
 <h3 id="alb-and-acm-certificates">ALB and ACM Certificates</h3>
+<p>For HTTPS, ACM certificates are attached to the ALB listener, not to the instances. The ALB terminates TLS and forwards HTTP (or HTTPS if E2E encryption is required) to the targets.</p>
 <pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="hcl"><code><span class="line"><span style="color:#B392F0">resource</span><span style="color:#79B8FF"> "aws_lb_listener"</span><span style="color:#79B8FF"> "https"</span><span style="color:#E1E4E8"> {</span></span>
 <span class="line"><span style="color:#E1E4E8">  load_balancer_arn</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> aws_lb</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">public</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">arn</span></span>
 <span class="line"><span style="color:#E1E4E8">  port</span><span style="color:#F97583">              =</span><span style="color:#79B8FF"> 443</span></span>
@@ -316,7 +338,9 @@ posts
 <span class="line"><span style="color:#E1E4E8">    }</span></span>
 <span class="line"><span style="color:#E1E4E8">  }</span></span>
 <span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
-<p>Use <code>ELBSecurityPolicy-TLS13-1-2-2021-06</code> — it enforces TLS 1.2 minimum and prefers TLS 1.3.</p>
+<p>Use <code>ELBSecurityPolicy-TLS13-1-2-2021-06</code> — it enforces TLS 1.2 minimum and prefers TLS 1.3. Avoid the older <code>ELBSecurityPolicy-2016-08</code> policy that still allows TLS 1.0 and 1.1.</p>
+<h3 id="when-to-use-a-private-alb-without-a-public-one">When to Use a Private ALB Without a Public One</h3>
+<p>If the application is accessed exclusively through a corporate VPN, AWS Client VPN, or Direct Connect — never from the public internet — deploy only a private internal ALB. There is no reason to expose a public endpoint that is then locked down at the WAF layer. <strong>Simpler is more secure</strong>.</p>
 <hr>
 <h2 id="putting-it-together">Putting It Together</h2>
 <p>A complete multi-AZ production VPC has:</p>
@@ -330,10 +354,11 @@ posts
 <li>An internet-facing ALB in public subnets, forwarding to targets in private subnets</li>
 <li>Security groups that chain: ALB → app → database, with no <code>0.0.0.0/0</code> on app or database tiers</li>
 </ul>
+<p>The three decisions — subnet layout, NAT strategy, and ALB placement — are not independent. An internal ALB in public subnets is a misconfiguration. A NAT Gateway in a private subnet cannot route outbound traffic. A single shared NAT Gateway across all AZs is both a reliability risk and a hidden cost driver. Getting the three right together is what makes the VPC production-grade.</p>
 <h3 id="further-reading">Further Reading</h3>
 <ul>
-<li><a href="https://docs.aws.amazon.com/vpc/latest/userguide/">AWS VPC User Guide</a></li>
-<li><a href="https://fck-nat.dev/">fck-nat</a></li>
-<li><a href="https://aws.amazon.com/vpc/pricing/">AWS NAT Gateway pricing</a></li>
-<li><a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#describe-ssl-policies">ALB security policies</a></li>
+<li><a href="https://docs.aws.amazon.com/vpc/latest/userguide/">AWS VPC User Guide</a> — Authoritative reference for all VPC primitives</li>
+<li><a href="https://fck-nat.dev/">fck-nat</a> — Cost-effective NAT instance alternative with HA support</li>
+<li><a href="https://aws.amazon.com/vpc/pricing/">AWS NAT Gateway pricing</a> — Data processing charges are the surprise line item</li>
+<li><a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/create-https-listener.html#describe-ssl-policies">ALB security policies</a> — TLS policy reference for ALB listeners</li>
 </ul>  </article> </main>  <script type="module">let r=null;const a=e=>new Promise((o,n)=>{if(document.querySelector(`script[src="${e}"]`)){o();return}const t=document.createElement("script");t.src=e,t.onload=()=>o(),t.onerror=()=>n(),document.head.appendChild(t)}),s=async()=>{const e=document.getElementById("vanta-bg");if(!(!e||r))try{await a("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"),await a("https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.dots.min.js"),r=window.VANTA.DOTS({el:"#vanta-bg",mouseControls:!0,touchControls:!0,gyroControls:!0,color:6990720,color2:3355440,backgroundColor:789516,size:2.5,spacing:38,showLines:!1}),e.style.opacity="1"}catch{}};document.addEventListener("astro:page-load",async()=>{await s();const e=document.getElementById("vanta-overlay");if(!e)return;if(!!document.getElementById("hero")){let n;n=()=>{const t=Math.min(1,window.scrollY/window.innerHeight);e.style.opacity=String(t),e.style.background=`rgba(12,12,12,${t*.65})`},window.addEventListener("scroll",n,{passive:!0}),n(),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("scroll",n)},{once:!0})}else e.style.opacity="1",e.style.background="rgba(12,12,12,0.65)"});</script> </body></html> <script type="module">document.addEventListener("astro:page-load",()=>{document.getElementById("back-btn")?.addEventListener("click",()=>{history.length>1?history.back():window.location.href="/"})});</script>

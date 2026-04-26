@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="A practical breakdown of the three database deployment models on AWS — fully managed RDS, semi-managed RDS Custom, and self-managed on EC2 — covering what each one costs in control, operational burden, and money."><meta name="theme-color" content="#0c0c0c"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><title>Amazon RDS vs RDS Custom vs Self-Managed Database on EC2: Choosing the Right Control Boundary — irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.14eF8cIR.js"></script><link rel="stylesheet" href="/_astro/_slug_.BC8UfKrE.css"><script type="module" src="/_astro/page.BrtTna5W.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
+<!DOCTYPE html><html lang="en" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="A practical breakdown of the three database deployment models on AWS — fully managed RDS, semi-managed RDS Custom, and self-managed on EC2 — covering what each one costs in control, operational burden, and money."><meta name="theme-color" content="#0c0c0c"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><title>Amazon RDS vs RDS Custom vs Self-Managed Database on EC2: Choosing the Right Control Boundary — irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.14eF8cIR.js"></script><link rel="stylesheet" href="/_astro/_slug_.ClgX1IQp.css"><script type="module" src="/_astro/page.BrtTna5W.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
 	animation-duration: 0.2s;
 	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
 	animation-fill-mode: both;
@@ -36,10 +36,11 @@
 	animation-fill-mode: both;
 	animation-name: astroFadeIn; }</style></head> <body> <div id="vanta-bg" class="fixed inset-0 pointer-events-none" style="z-index:-20;opacity:0;transition:opacity 0.8s ease" data-astro-transition-persist="astro-n6ay7iuf-2"></div> <div id="vanta-overlay" class="fixed inset-0 pointer-events-none" style="z-index:-10;backdrop-filter:blur(2px);background:rgba(12,12,12,0);opacity:0" data-astro-transition-persist="astro-hpledfl6-3"></div>  <main class="max-w-2xl mx-auto px-6 pb-24"> <header class="sticky top-0 bg-background/60 backdrop-blur-sm z-10 pt-8 pb-5 mb-12 border-b border-border"> <button id="back-btn" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-accent transition-colors mb-4 cursor-pointer bg-transparent border-0 p-0"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <path d="M19 12H5M12 5l-7 7 7 7"></path> </svg>
 posts
-</button> <h1 class="text-2xl font-semibold text-foreground mb-3 leading-snug" data-pagefind-meta="title">Amazon RDS vs RDS Custom vs Self-Managed Database on EC2: Choosing the Right Control Boundary</h1> <div class="flex flex-wrap items-center gap-3"> <time class="text-sm text-muted">25 July 2025</time>  <span class="text-border">·</span> <span class="text-sm text-muted">8 min read</span>   <span class="text-border">·</span> <div class="flex flex-wrap gap-1.5"> <span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">AWS</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Architecture</span> </div>  </div> </header> <article class="prose prose-sm max-w-none" data-pagefind-body>  <p>Every database deployment on AWS involves a trade-off between how much AWS manages and how much control you retain. The three options — Amazon RDS, RDS Custom, and a self-managed database on EC2 — represent three distinct positions on that spectrum. Picking the wrong one either leaves you paying for management you didn’t need or fighting AWS automation for access you should have had from the start.</p>
+</button> <h1 class="text-2xl font-semibold text-foreground mb-3 leading-snug" data-pagefind-meta="title">Amazon RDS vs RDS Custom vs Self-Managed Database on EC2: Choosing the Right Control Boundary</h1> <div class="flex flex-wrap items-center gap-3"> <time class="text-sm text-muted">25 February 2026</time>  <span class="text-border">·</span> <span class="text-sm text-muted">11 min read</span>   <span class="text-border">·</span> <div class="flex flex-wrap gap-1.5"> <span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">AWS</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Architecture</span> </div>  </div> </header> <article class="prose prose-sm max-w-none" data-pagefind-body>  <p>Every database deployment on AWS involves a trade-off between how much AWS manages and how much control customers retain. The three options — Amazon RDS, RDS Custom, and a self-managed database on EC2 — represent three distinct positions on that spectrum. Picking the wrong one either leaves customer paying for management they didn’t need or fighting AWS automation for access they should have had from the start.</p>
+<p>This writeup is about understanding where the control boundary sits in each model, and which workloads belong in each one.</p>
 <hr>
 <h2 id="the-control-spectrum">The Control Spectrum</h2>
-<p>There are roughly five layers where control matters:</p>
+<p>Before comparing options, it helps to be precise about what “control” means in this context. There are roughly five layers where it matters:</p>
 
 
 
@@ -70,87 +71,95 @@ posts
 
 
 <table><thead><tr><th>Layer</th><th>What it covers</th></tr></thead><tbody><tr><td><strong>OS</strong></td><td>Patching, kernel parameters, OS-level tuning, direct SSH</td></tr><tr><td><strong>Database binary</strong></td><td>Engine version, patch application, custom builds</td></tr><tr><td><strong>Database config</strong></td><td><code>pg_hba.conf</code>, <code>my.cnf</code>, init scripts, extensions, plugins</td></tr><tr><td><strong>Storage</strong></td><td>Disk type, filesystem, I/O scheduler, direct volume access</td></tr><tr><td><strong>HA &#x26; replication</strong></td><td>Failover mechanism, replica topology, replication lag visibility</td></tr></tbody></table>
-<p>Amazon RDS controls all five on your behalf. RDS Custom gives you access to OS and some database binary layers while AWS still manages infrastructure. Self-managed EC2 gives you all five but makes you responsible for all five.</p>
+<p>Amazon RDS controls all five on customer’s behalf. RDS Custom gives customer access to OS and some database binary layers while AWS still manages infrastructure. Self-managed EC2 gives them all five but makes them responsible for all five.</p>
 <hr>
 <h2 id="amazon-rds">Amazon RDS</h2>
-<p>RDS is a fully managed relational database service. AWS handles provisioning, OS patching, database engine patching, backups, Multi-AZ failover, and read replica management. You interact with the database through its endpoint — there is no SSH, no OS shell, no direct filesystem access.</p>
-<h3 id="what-you-get">What You Get</h3>
+<p>RDS is a fully managed relational database service. AWS handles provisioning, OS patching, database engine patching, backups, Multi-AZ failover, and read replica management. User interact with the database through its endpoint — there is no SSH, no OS shell, no direct filesystem access.</p>
+<h3 id="what-customer-get">What Customer Get</h3>
 <ul>
 <li><strong>Automated backups</strong> with point-in-time recovery up to 35 days</li>
-<li><strong>Multi-AZ deployments</strong> with automatic failover (typically under 60 seconds)</li>
+<li><strong>Multi-AZ deployments</strong> with automatic failover (typically under 60 seconds for most engines)</li>
 <li><strong>Read replicas</strong> (up to 15 for Aurora, 5 for standard RDS engines)</li>
 <li><strong>Storage autoscaling</strong> — the volume grows automatically when free space drops below a threshold</li>
-<li><strong>Parameter groups</strong> for database-level configuration</li>
+<li><strong>Parameter groups</strong> for database-level configuration (equivalent to editing <code>my.cnf</code> or <code>postgresql.conf</code>, but through the AWS API)</li>
 <li><strong>Option groups</strong> for adding features like Oracle TDE or SQL Server native backup</li>
 </ul>
-<h3 id="what-you-give-up">What You Give Up</h3>
-<p>You cannot:</p>
+<h3 id="what-they-give-up">What They Give Up</h3>
+<p>They cannot:</p>
 <ul>
 <li>SSH into the underlying EC2 instance</li>
 <li>Install OS packages or custom monitoring agents at the OS level</li>
-<li>Apply database patches on your own schedule</li>
-<li>Use database features that require OS-level access</li>
-<li>Access transaction log files directly on disk</li>
+<li>Apply database patches on own schedule (minor patches can be deferred; major versions require a manual upgrade)</li>
+<li>Use database features that require OS-level access (e.g., <code>LOAD DATA INFILE</code> from a local path, custom tablespace directories on specific mount points)</li>
+<li>Access the transaction log files directly (customers get logical replication slots, but not raw WAL files on disk)</li>
 </ul>
+<h3 id="supported-engines">Supported Engines</h3>
+<p>MySQL, PostgreSQL, MariaDB, Oracle, SQL Server, and Amazon Aurora (MySQL-compatible and PostgreSQL-compatible). The exact feature set varies by engine — Oracle and SQL Server have the most restrictions because of licensing constraints.</p>
 <h3 id="when-rds-is-the-right-choice">When RDS Is the Right Choice</h3>
 <ul>
-<li>Your workload uses a standard engine configuration without custom OS-level requirements</li>
-<li>The team does not have dedicated DBAs who need low-level access</li>
-<li>You want automated patching, backups, and failover without building the tooling yourself</li>
-<li>You are running a SaaS product where operational simplicity at scale matters more than tuning flexibility</li>
+<li>Customer workload uses a standard engine configuration without custom OS-level requirements</li>
+<li>The team does not have dedicated database administrators who need low-level access</li>
+<li>Customers want automated patching, backups, and failover without building the tooling yourself</li>
+<li>Customers are running a SaaS product where operational simplicity at scale matters more than tuning flexibility</li>
 </ul>
 <p>RDS is the correct default for most production workloads. The managed overhead it removes (patch cycles, backup validation, failover testing) is genuinely expensive to replicate yourself.</p>
 <hr>
 <h2 id="rds-custom">RDS Custom</h2>
-<p>RDS Custom sits between fully managed RDS and self-managed EC2. It gives you SSH access to the underlying EC2 instance and direct access to the database binary and OS, while AWS still manages the infrastructure primitives.</p>
-<p>RDS Custom currently supports Oracle and SQL Server — specifically because enterprise Oracle and SQL Server deployments frequently require OS-level customisation that standard RDS does not permit.</p>
-<h3 id="what-you-get-beyond-standard-rds">What You Get Beyond Standard RDS</h3>
+<p>RDS Custom sits between fully managed RDS and self-managed EC2. It gives customers SSH access to the underlying EC2 instance and direct access to the database binary and OS, while AWS still manages the infrastructure primitives (networking, storage, backups at the snapshot level).</p>
+<p>RDS Custom currently supports Oracle and SQL Server. It exists specifically for those engines because enterprise Oracle and SQL Server deployments frequently require OS-level customisation that standard RDS does not permit.</p>
+<h3 id="what-customers-get-beyond-standard-rds">What Customers Get (Beyond Standard RDS)</h3>
 <ul>
 <li><strong>SSH access</strong> to the underlying EC2 instance via AWS Systems Manager (SSM)</li>
-<li><strong>OS-level access</strong> — install agents, modify OS parameters, run OS-level scripts</li>
-<li><strong>Database binary access</strong> — apply custom Oracle patches, configure Oracle options that require OS interaction</li>
-<li><strong>Custom database configurations</strong> that require editing files directly on disk</li>
-<li><strong>Shared responsibility for patching</strong> — you own OS and database patch application; AWS manages the underlying EC2 host and EBS volumes</li>
+<li><strong>OS-level access</strong> — they can install agents, modify OS parameters, and run OS-level scripts</li>
+<li><strong>Database binary access</strong> — apply custom Oracle patches, configure Oracle options that require OS interaction (Oracle Database Vault, Transparent Data Encryption with custom keystores)</li>
+<li><strong>Custom database configurations</strong> that require editing files directly on disk rather than through parameter groups</li>
+<li><strong>Shared responsibility for patching</strong> — they own OS and database patch application; AWS still manages the underlying EC2 host and EBS volumes</li>
 </ul>
 <h3 id="the-automation-boundary">The Automation Boundary</h3>
-<p>RDS Custom introduces the concept of a <strong>pause automation</strong> window. If you make changes that AWS automation does not expect, first pause RDS Custom automation, make the changes, then resume. If you skip this step, AWS automation may detect the unexpected state and attempt to remediate it — potentially undoing your changes.</p>
+<p>RDS Custom introduces the concept of a <strong>pause automation</strong> window. If engineer make changes to the instance that AWS automation does not expect (restarting the database manually, modifying system files), they first pause RDS Custom automation, make the changes, then resume automation. If they skip this step, AWS automation may detect the unexpected state and attempt to remediate it, potentially undoing the changes.</p>
+<p>This is the key operational difference from standard RDS: engineers are not fully shielded from the infrastructure layer, which means they can break things that RDS would have protected them from.</p>
 <h3 id="when-rds-custom-is-the-right-choice">When RDS Custom Is the Right Choice</h3>
 <ul>
-<li>Running <strong>Oracle Database</strong> and need features that require OS access: Oracle GoldenGate, custom keystore configurations, specific Oracle patches not yet available in standard RDS</li>
-<li>Running <strong>SQL Server</strong> with requirements for custom CLR assemblies, linked server configurations that depend on OS-level authentication, or custom SQL Server Agent jobs that interact with the OS</li>
-<li>Migrating an existing on-premises Oracle or SQL Server installation that cannot be refactored to work within standard RDS constraints</li>
+<li>Customer are running <strong>Oracle Database</strong> and need features that require OS access: Oracle GoldenGate, custom keystore configurations, specific Oracle patches not yet available in standard RDS</li>
+<li>Customer are running <strong>SQL Server</strong> with requirements for custom CLR assemblies, linked server configurations that depend on OS-level authentication, or custom SQL Server Agent jobs that interact with the OS</li>
+<li>Engineers are migrating an existing on-premises Oracle or SQL Server installation to AWS and cannot refactor it to work within standard RDS constraints</li>
 </ul>
+<p>If customers are not running Oracle or SQL Server, RDS Custom is not available to them — and for MySQL and PostgreSQL workloads, the combination of standard RDS parameter groups and extensions covers the vast majority of production requirements.</p>
 <hr>
 <h2 id="self-managed-database-on-ec2">Self-Managed Database on EC2</h2>
-<p>Running your own database engine on an EC2 instance gives you complete control over every layer. You also own every failure.</p>
-<h3 id="what-you-get-1">What You Get</h3>
+<p>Running own database engine on an EC2 instance gives engineer complete control over every layer. They choose the OS, the engine version, the build flags, the storage configuration, the replication topology, and the backup strategy. They also own every failure.</p>
+<h3 id="what-customer-get-1">What Customer Get</h3>
 <ul>
 <li><strong>Full OS access</strong> — any Linux distribution, any kernel, any OS-level tuning</li>
-<li><strong>Any engine version</strong> — including versions AWS does not support in RDS, or engines RDS does not offer (CockroachDB, YugabyteDB, TiDB, Cassandra, etc.)</li>
+<li><strong>Any engine version</strong> — including versions AWS does not support in RDS, custom builds, or engines RDS does not offer (CockroachDB, YugabyteDB, TiDB, Cassandra, etc.)</li>
 <li><strong>Direct storage access</strong> — choose between <code>io2</code> block express, <code>gp3</code> with custom IOPS and throughput, or instance store NVMe for the highest I/O performance</li>
-<li><strong>Custom replication topologies</strong> — Patroni for PostgreSQL HA, Orchestrator for MySQL</li>
+<li><strong>Custom replication topologies</strong> — Patroni for PostgreSQL HA, Orchestrator for MySQL, custom read replica fanout configurations</li>
 <li><strong>No managed service overhead</strong> — no RDS licensing premium on top of instance costs</li>
 </ul>
-<h3 id="what-you-own">What You Own</h3>
-<p>Everything RDS handles automatically becomes your operational responsibility:</p>
+<h3 id="what-customer-own">What Customer Own</h3>
+<p>Everything RDS handles automatically becomes customer’s operational responsibility:</p>
 <ul>
-<li>OS patching — schedule, test, and apply kernel and package updates</li>
-<li>Database patching — track CVEs, download patches, test in staging, apply in production</li>
-<li>Backups — build or configure the backup pipeline (pg_dump, xtrabackup, EBS snapshots)</li>
-<li>Point-in-time recovery — WAL archiving to S3 with pgBackRest or WAL-G</li>
-<li>High availability — deploy and operate Patroni, Pacemaker, or a similar HA solution</li>
-<li>Failover automation — Route 53 health checks and DNS failover, or a cluster manager</li>
-<li>Storage management — monitor disk usage, extend volumes, manage RAID</li>
-<li>Monitoring — CloudWatch agent, Prometheus exporters, slow query logs — all configured manually</li>
+<li><strong>OS patching</strong> — engineers schedule, test, and apply kernel and package updates</li>
+<li><strong>Database patching</strong> — engineers track CVEs, download patches, test in staging, and apply them in production</li>
+<li><strong>Backups</strong> — engineers build or configure the backup pipeline (pg_dump, xtrabackup, filesystem snapshots via EBS)</li>
+<li><strong>Point-in-time recovery</strong> — WAL archiving to S3 with a tool like pgBackRest or WAL-G if engineers want PITR; otherwise they recover to the last snapshot</li>
+<li><strong>High availability</strong> — engineers deploy and operate Patroni, Pacemaker, or a similar HA solution; they handle split-brain scenarios</li>
+<li><strong>Failover automation</strong> — Route 53 health checks and DNS failover, or a cluster manager that updates the application connection string</li>
+<li><strong>Storage management</strong> — monitoring disk usage, extending volumes, managing RAID if applicable</li>
+<li><strong>Monitoring</strong> — CloudWatch agent, Prometheus exporters, pg_stat_statements, slow query logs — all configured manually</li>
 </ul>
+<h3 id="storage-considerations">Storage Considerations</h3>
+<p>The storage choice matters significantly for a self-managed database. <code>io2</code> Block Express gives customers up to 256,000 IOPS and 4,000 MB/s throughput per volume, which exceeds what any current RDS instance can deliver. For write-heavy OLTP workloads that have saturated RDS storage performance, this is the primary technical reason to consider self-managed EC2.</p>
+<p>Instance store (NVMe SSD physically attached to the host) delivers the highest IOPS and lowest latency of any storage option in AWS, with no network path. The tradeoff is that instance store is ephemeral — data is lost if the instance stops or is terminated. Using instance store for a production database requires a robust replication strategy where the instance store is never the only copy of the data (typically: primary on instance store, synchronous replica on EBS, WAL streaming to S3).</p>
 <h3 id="when-self-managed-ec2-is-the-right-choice">When Self-Managed EC2 Is the Right Choice</h3>
 <ul>
-<li>You need a database engine that RDS does not support</li>
-<li>You need storage performance beyond what RDS offers (>80,000 IOPS, >2,000 MB/s throughput)</li>
-<li>You have a database team with the expertise and capacity to own patching, HA, and recovery</li>
-<li>You are running a stateful distributed database (Cassandra, ScyllaDB) where the cluster topology is application-managed</li>
+<li>Customers need a database engine that RDS does not support</li>
+<li>Customers need storage performance beyond what RDS offers (>80,000 IOPS, >2,000 MB/s throughput on a single instance)</li>
+<li>Customers have a database team with the expertise and capacity to own patching, HA, and recovery</li>
+<li>Customers have specific licensing requirements (BYOL with agreements tied to physical core counts, custom Oracle options not available in RDS Custom)</li>
+<li>Customers are running a stateful distributed database (Cassandra, ScyllaDB) where the cluster topology is application-managed rather than handled by AWS</li>
 </ul>
-<p>Self-managed EC2 is not the right choice because “we want more control” in the abstract. The operational cost is real and recurring.</p>
+<p>Self-managed EC2 is not the right choice because “we want more control” in the abstract. The operational cost is real and recurring — every hour spent on patching cycles, backup validation, and HA incident response is an hour not spent on the application.</p>
 <hr>
 <h2 id="side-by-side-comparison">Side-by-Side Comparison</h2>
 
@@ -230,45 +239,45 @@ posts
 
 
 
-<table><thead><tr><th>Dimension</th><th>RDS</th><th>RDS Custom</th><th>Self-Managed EC2</th></tr></thead><tbody><tr><td>OS access</td><td>None</td><td>Yes (SSM)</td><td>Yes (SSH)</td></tr><tr><td>Engine patching</td><td>AWS-managed</td><td>Shared</td><td>You</td></tr><tr><td>OS patching</td><td>AWS-managed</td><td>You</td><td>You</td></tr><tr><td>Backup / PITR</td><td>Automated</td><td>Automated</td><td>You</td></tr><tr><td>Multi-AZ failover</td><td>Automated</td><td>Automated</td><td>You</td></tr><tr><td>Read replicas</td><td>Managed</td><td>Managed</td><td>You</td></tr><tr><td>Custom extensions</td><td>Parameter groups only</td><td>Full access</td><td>Full access</td></tr><tr><td>Storage autoscaling</td><td>Yes</td><td>Yes</td><td>Manual</td></tr><tr><td>Supported engines</td><td>MySQL, PG, MariaDB, Oracle, SQL Server, Aurora</td><td>Oracle, SQL Server</td><td>Any</td></tr><tr><td>Cost premium</td><td>RDS markup on instance</td><td>RDS markup on instance</td><td>Raw EC2 price</td></tr><tr><td>Operational burden</td><td>Low</td><td>Medium</td><td>High</td></tr></tbody></table>
+<table><thead><tr><th>Dimension</th><th>RDS</th><th>RDS Custom</th><th>Self-Managed EC2</th></tr></thead><tbody><tr><td>OS access</td><td>None</td><td>Yes (SSM)</td><td>Yes (SSH)</td></tr><tr><td>Engine patching</td><td>AWS-managed</td><td>Shared</td><td>Customers</td></tr><tr><td>OS patching</td><td>AWS-managed</td><td>Customers</td><td>Customers</td></tr><tr><td>Backup / PITR</td><td>Automated</td><td>Automated</td><td>Customers</td></tr><tr><td>Multi-AZ failover</td><td>Automated</td><td>Automated</td><td>Customers</td></tr><tr><td>Read replicas</td><td>Managed</td><td>Managed</td><td>Customers</td></tr><tr><td>Custom extensions</td><td>Parameter groups only</td><td>Full access</td><td>Full access</td></tr><tr><td>Storage autoscaling</td><td>Yes</td><td>Yes</td><td>Manual</td></tr><tr><td>Supported engines</td><td>MySQL, PG, MariaDB, Oracle, SQL Server, Aurora</td><td>Oracle, SQL Server</td><td>Any</td></tr><tr><td>Cost premium</td><td>RDS markup on instance</td><td>RDS markup on instance</td><td>Raw EC2 price</td></tr><tr><td>Operational burden</td><td>Low</td><td>Medium</td><td>High</td></tr></tbody></table>
 <hr>
 <h2 id="the-cost-reality">The Cost Reality</h2>
-<p>RDS charges a premium over raw EC2 pricing for the same instance family. For a <code>db.r6g.2xlarge</code> (8 vCPU, 64 GB RAM) in <code>ap-southeast-1</code>:</p>
+<p>RDS charges a premium over raw EC2 pricing for the same instance family. For a <code>db.r6g.2xlarge</code> (8 vCPU, 64 GB RAM), the on-demand price in <code>ap-southeast-1</code> is roughly:</p>
 <ul>
 <li><strong>RDS (PostgreSQL, Multi-AZ):</strong> <del>$0.96/hour (</del>$691/month)</li>
 <li><strong>EC2 (r6g.2xlarge, on-demand):</strong> <del>$0.404/hour (</del>$291/month)</li>
 </ul>
-<p>The gap narrows significantly with Reserved Instances. At reserved pricing, the operational cost of self-managing often exceeds the savings unless the team already has the tooling built and the expertise in-house.</p>
-<p>Aurora Serverless v2 changes the calculus for variable workloads — it scales in 0.5 ACU increments, paying for actual consumed capacity rather than a fixed instance size. For workloads with significant idle periods, Aurora Serverless v2 can be materially cheaper than a fixed RDS instance.</p>
+<p>The gap narrows significantly with Reserved Instances. A 1-year no-upfront Reserved Instance for RDS cuts the price roughly in half, as does a 1-year Reserved Instance for EC2. At reserved pricing, the operational cost of self-managing often exceeds the savings unless the team already has the tooling built and the expertise in-house.</p>
+<p>Aurora Serverless v2 changes the calculus for variable workloads — it scales in 0.5 ACU increments, which means customers pay for actual consumed capacity rather than a fixed instance size. For workloads with significant idle periods (dev/staging, overnight batch jobs, seasonal traffic), Aurora Serverless v2 can be materially cheaper than a fixed RDS instance.</p>
 <hr>
 <h2 id="decision-framework">Decision Framework</h2>
-<p>Start with RDS unless you have a specific reason not to. Then work through these questions:</p>
-<p><strong>Is the engine supported by RDS?</strong></p>
+<p>Start with RDS unless customer have a specific reason not to. Then work through these questions:</p>
+<p><strong>Is engine supported by RDS?</strong></p>
 <ul>
 <li>No → Self-managed EC2.</li>
 <li>Yes → Continue.</li>
 </ul>
-<p><strong>Do you need OS-level access or custom Oracle/SQL Server configurations?</strong></p>
+<p><strong>Do customer need OS-level access or custom Oracle/SQL Server configurations?</strong></p>
 <ul>
-<li>Yes → RDS Custom (if Oracle or SQL Server).</li>
+<li>Yes → RDS Custom (if Oracle or SQL Server), otherwise reconsider whether the requirement is real.</li>
 <li>No → Continue.</li>
 </ul>
-<p><strong>Do you need storage performance beyond RDS limits, or a replication topology RDS cannot provide?</strong></p>
+<p><strong>Do customer need storage performance beyond RDS limits, or a replication topology RDS cannot provide?</strong></p>
 <ul>
 <li>Yes → Self-managed EC2, but budget for the operational overhead.</li>
 <li>No → RDS.</li>
 </ul>
-<p><strong>Do you have a dedicated DBA team with capacity to own patching, HA, and recovery tooling?</strong></p>
+<p><strong>Do customer have a dedicated DBA team with capacity to own patching, HA, and recovery tooling?</strong></p>
 <ul>
-<li>No → RDS, regardless of other preferences.</li>
+<li>No → RDS, regardless of other preferences. Self-managed EC2 without DBA capacity becomes a liability.</li>
 <li>Yes → Any option is viable; let the technical requirements drive the choice.</li>
 </ul>
-<p>The control boundary is not about preference. It is about which failure modes you are equipped to handle and which ones you would rather outsource.</p>
+<p>The control boundary is not about preference. It is about which failure modes customer are equipped to handle and which ones customer would rather outsource.</p>
 <h3 id="further-reading">Further Reading</h3>
 <ul>
-<li><a href="https://docs.aws.amazon.com/rds/latest/userguide/">Amazon RDS documentation</a></li>
-<li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-custom.html">RDS Custom documentation</a></li>
-<li><a href="https://pgbackrest.org/">pgBackRest</a></li>
-<li><a href="https://patroni.readthedocs.io/">Patroni</a></li>
-<li><a href="https://aws.amazon.com/blogs/database/">AWS Database Blog</a></li>
+<li><a href="https://docs.aws.amazon.com/rds/latest/userguide/">Amazon RDS documentation</a> — Feature reference for all supported engines</li>
+<li><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-custom.html">RDS Custom documentation</a> — Supported engines, automation pause/resume, and shared responsibility model</li>
+<li><a href="https://pgbackrest.org/">pgBackRest</a> — WAL archiving and PITR for self-managed PostgreSQL</li>
+<li><a href="https://patroni.readthedocs.io/">Patroni</a> — HA solution for PostgreSQL on EC2</li>
+<li><a href="https://aws.amazon.com/blogs/database/">AWS Database Blog</a> — Engine-specific migration and tuning guides</li>
 </ul>  </article> </main>  <script type="module">let r=null;const a=e=>new Promise((o,n)=>{if(document.querySelector(`script[src="${e}"]`)){o();return}const t=document.createElement("script");t.src=e,t.onload=()=>o(),t.onerror=()=>n(),document.head.appendChild(t)}),s=async()=>{const e=document.getElementById("vanta-bg");if(!(!e||r))try{await a("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"),await a("https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.dots.min.js"),r=window.VANTA.DOTS({el:"#vanta-bg",mouseControls:!0,touchControls:!0,gyroControls:!0,color:6990720,color2:3355440,backgroundColor:789516,size:2.5,spacing:38,showLines:!1}),e.style.opacity="1"}catch{}};document.addEventListener("astro:page-load",async()=>{await s();const e=document.getElementById("vanta-overlay");if(!e)return;if(!!document.getElementById("hero")){let n;n=()=>{const t=Math.min(1,window.scrollY/window.innerHeight);e.style.opacity=String(t),e.style.background=`rgba(12,12,12,${t*.65})`},window.addEventListener("scroll",n,{passive:!0}),n(),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("scroll",n)},{once:!0})}else e.style.opacity="1",e.style.background="rgba(12,12,12,0.65)"});</script> </body></html> <script type="module">document.addEventListener("astro:page-load",()=>{document.getElementById("back-btn")?.addEventListener("click",()=>{history.length>1?history.back():window.location.href="/"})});</script>

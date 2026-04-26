@@ -1,0 +1,194 @@
+<!DOCTYPE html><html lang="en" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="What I learned about Terraform module design after going from a single reusable module to a three-tier nested hierarchy-- the flexibility it unlocks, and the complexity it introduces."><meta name="theme-color" content="#0c0c0c"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><title>Building Reusable Terraform Modules: From Flat to Nested Hierarchies — irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.14eF8cIR.js"></script><link rel="stylesheet" href="/_astro/_slug_.ClgX1IQp.css"><script type="module" src="/_astro/page.BrtTna5W.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body> <div id="vanta-bg" class="fixed inset-0 pointer-events-none" style="z-index:-20;opacity:0;transition:opacity 0.8s ease" data-astro-transition-persist="astro-n6ay7iuf-2"></div> <div id="vanta-overlay" class="fixed inset-0 pointer-events-none" style="z-index:-10;backdrop-filter:blur(2px);background:rgba(12,12,12,0);opacity:0" data-astro-transition-persist="astro-hpledfl6-3"></div>  <main class="max-w-2xl mx-auto px-6 pb-24"> <header class="sticky top-0 bg-background/60 backdrop-blur-sm z-10 pt-8 pb-5 mb-12 border-b border-border"> <button id="back-btn" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-accent transition-colors mb-4 cursor-pointer bg-transparent border-0 p-0"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <path d="M19 12H5M12 5l-7 7 7 7"></path> </svg>
+posts
+</button> <h1 class="text-2xl font-semibold text-foreground mb-3 leading-snug" data-pagefind-meta="title">Building Reusable Terraform Modules: From Flat to Nested Hierarchies</h1> <div class="flex flex-wrap items-center gap-3"> <time class="text-sm text-muted">25 March 2026</time>  <span class="text-border">·</span> <span class="text-sm text-muted">8 min read</span>   <span class="text-border">·</span> <div class="flex flex-wrap gap-1.5"> <span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">AWS</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Terraform</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">DevOps</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">IaC</span> </div>  </div> </header> <article class="prose prose-sm max-w-none" data-pagefind-body>  <blockquote>
+<p><strong>Disclaimer:</strong> This article is based on my own experience building and consuming Terraform modules across different organisations. Module design is opinionated territory— what works at a 5-person team won’t necessarily scale to a platform team serving 50 engineers, and vice versa.</p>
+</blockquote>
+<p>I had been writing reusable Terraform modules for a while before joining my current organization. My model was simple: extract repeated infrastructure into a module, parameterise what varies, call it from multiple places. It worked. Then I joined a larger organisation and discovered that modules can call other modules— and that those modules can call yet another layer of modules. Three tiers deep. That changes how you think about ownership, defaults, and what “reusable” actually means.</p>
+<hr>
+<h2 id="the-single-module-approach">The Single Module Approach</h2>
+<p>Before getting into nested hierarchies, it’s worth being precise about what a basic reusable module looks like and why it already solves a real problem.</p>
+<p>A module is just a directory of Terraform files with defined inputs and outputs. You call it with a <code>module</code> block and pass in variables:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="hcl"><code><span class="line"><span style="color:#B392F0">module</span><span style="color:#79B8FF"> "vpc"</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  source</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "./modules/vpc"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  vpc_cidr</span><span style="color:#F97583">        =</span><span style="color:#9ECBFF"> "10.0.0.0/16"</span></span>
+<span class="line"><span style="color:#E1E4E8">  public_subnets</span><span style="color:#F97583">  =</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"10.0.1.0/24"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"10.0.2.0/24"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">  private_subnets</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> [</span><span style="color:#9ECBFF">"10.0.10.0/24"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"10.0.20.0/24"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">  enable_nat</span><span style="color:#F97583">      =</span><span style="color:#79B8FF"> true</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>The module encapsulates all the <code>aws_vpc</code>, <code>aws_subnet</code>, <code>aws_route_table</code>, and <code>aws_internet_gateway</code> resources. The caller doesn’t need to know how subnets are associated with route tables. It just passes in what it cares about and gets back outputs like <code>vpc_id</code> and <code>private_subnet_ids</code>.</p>
+<p>This is flat module design: one layer of abstraction, one team owns the module, all callers are on the same level. It handles DRY infrastructure and consistent resource configuration well.</p>
+<p>Where it starts to strain is when multiple teams need the same module but with different conventions, when a platform team wants to enforce standards that individual teams can’t override, or when a change in the module affects every caller simultaneously with no version isolation between teams.</p>
+<hr>
+<h2 id="the-nested-module-hierarchy">The Nested Module Hierarchy</h2>
+<p>At my current organization, the pattern I encountered was a three-tier hierarchy:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Project module  (project-specific config)</span></span>
+<span class="line"><span>    └── Team module  (team-wide defaults and conventions)</span></span>
+<span class="line"><span>            └── Platform module  (organisation-wide standards, owned by platform team)</span></span></code></pre>
+<p>Each layer calls the one below it. The platform module is the most generic— it exposes every possible variable and organization’s best practices. The team module wraps the platform module and bakes in team-specific defaults, restricting what individual projects need to worry about. The project module calls the team module with only the variables that are genuinely project-specific.</p>
+<h3 id="platform-module">Platform Module</h3>
+<p>The platform module is owned by the platform or infrastructure team. It defines the most fundamental resources and exposes full configurability with the best practices the organization has defines. Think of it as the raw capability layer with security best practice:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="hcl"><code><span class="line"><span style="color:#6A737D"># modules/platform/vpc/main.tf</span></span>
+<span class="line"><span style="color:#B392F0">resource</span><span style="color:#79B8FF"> "aws_vpc"</span><span style="color:#79B8FF"> "this"</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  cidr_block</span><span style="color:#F97583">           =</span><span style="color:#E1E4E8"> var</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">cidr_block</span></span>
+<span class="line"><span style="color:#E1E4E8">  enable_dns_hostnames</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> var</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">enable_dns_hostnames</span></span>
+<span class="line"><span style="color:#E1E4E8">  enable_dns_support</span><span style="color:#F97583">   =</span><span style="color:#E1E4E8"> var</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">enable_dns_support</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  tags</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> merge</span><span style="color:#E1E4E8">(var</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">tags, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    ManagedBy </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "APAC Cloud Platform Team"</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>It enforces one thing: the <code>ManagedBy</code> tag. Everything else is a variable. The platform team controls the structure and the hard-coded standards. Individual teams don’t call this module directly.</p>
+<h3 id="team-module">Team Module</h3>
+<p>The team module wraps the platform module and applies team-level decisions. It reduces the surface area that project-level callers have to think about:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="hcl"><code><span class="line"><span style="color:#6A737D"># modules/team/vpc/main.tf</span></span>
+<span class="line"><span style="color:#B392F0">module</span><span style="color:#79B8FF"> "vpc"</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  source</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "git::https://github.com/org/platform-modules.git//vpc?ref=v2.3.0"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  cidr_block</span><span style="color:#F97583">           =</span><span style="color:#E1E4E8"> var</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">cidr_block</span></span>
+<span class="line"><span style="color:#E1E4E8">  enable_dns_hostnames</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> true</span><span style="color:#6A737D">   # team standard, not exposed to callers</span></span>
+<span class="line"><span style="color:#E1E4E8">  enable_dns_support</span><span style="color:#F97583">   =</span><span style="color:#79B8FF"> true</span><span style="color:#6A737D">   # team standard, not exposed to callers</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  tags</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> merge</span><span style="color:#E1E4E8">(var</span><span style="color:#F97583">.</span><span style="color:#E1E4E8">tags, {</span></span>
+<span class="line"><span style="color:#E1E4E8">    Team        </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "cloud-coe-MY"</span></span>
+<span class="line"><span style="color:#E1E4E8">    CostCentre  </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> var.cost_centre</span></span>
+<span class="line"><span style="color:#E1E4E8">  })</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><code>enable_dns_hostnames</code> and <code>enable_dns_support</code> are hardcoded here because every project in the team needs them enabled. There’s no reason to push that decision down to each project. The team module also adds team-level tags that every project must carry.</p>
+<h3 id="project-module">Project Module</h3>
+<p>The project module is where individual engineers work. It calls the team module and only passes what’s genuinely unique to the project:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="hcl"><code><span class="line"><span style="color:#6A737D"># project/networking/main.tf</span></span>
+<span class="line"><span style="color:#B392F0">module</span><span style="color:#79B8FF"> "vpc"</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  source</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "git::https://github.com/org/team-modules.git//vpc?ref=v1.1.0"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  cidr_block</span><span style="color:#F97583">   =</span><span style="color:#9ECBFF"> "10.20.0.0/16"</span></span>
+<span class="line"><span style="color:#E1E4E8">  cost_centre</span><span style="color:#F97583">  =</span><span style="color:#9ECBFF"> "CC-4421"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  tags</span><span style="color:#F97583"> =</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    Project     </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "payment-service"</span></span>
+<span class="line"><span style="color:#E1E4E8">    Environment </span><span style="color:#F97583">=</span><span style="color:#9ECBFF"> "development"</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Two variables. The project engineer doesn’t need to know what DNS settings are applied, which tags are mandatory, or which version of the platform module is in use. That’s been decided by the layers above.</p>
+<hr>
+<h2 id="what-the-hierarchy-gets-you">What the Hierarchy Gets You</h2>
+<h3 id="enforced-standards-without-trust">Enforced Standards Without Trust</h3>
+<p>In a flat module world, a platform team can document that certain tags are required, but there’s nothing stopping a project from omitting them. In the nested hierarchy, those tags are hardcoded in the team module. Projects inherit them whether they think about it or not.</p>
+<h3 id="blast-radius-control">Blast Radius Control</h3>
+<p>Changes to the platform module don’t immediately affect all projects. The team module pins a specific version of the platform module (<code>ref=v2.3.0</code>). When the platform team releases a new version, the team module upgrades on its own schedule and tests the change before project modules inherit it. Projects are insulated by the team module version pin.</p>
+<h3 id="smaller-project-configs">Smaller Project Configs</h3>
+<p>Project-level Terraform becomes genuinely minimal. Engineers specify what makes their project unique, not the full configuration of every resource. Onboarding is faster because there’s less to understand and fewer ways to get it wrong.</p>
+<hr>
+<h2 id="what-the-hierarchy-costs-you">What the Hierarchy Costs You</h2>
+<h3 id="debugging-depth">Debugging Depth</h3>
+<p>When something is wrong with a resource, tracing it back to the source takes three hops. A tag is wrong— is it coming from the project module, the team module, or the platform module? A variable isn’t being passed— which layer dropped it? <code>terraform plan</code> output nests module paths three levels deep (<code>module.vpc.module.vpc.module.vpc.aws_vpc.this</code>), which is disorienting until you’ve seen it enough times.</p>
+<h3 id="version-matrix-complexity">Version Matrix Complexity</h3>
+<p>Each layer has its own version. Project modules pin a version of the team module, which pins a version of the platform module. When the platform team ships a breaking change, the upgrade chain is: platform module new version → team module tests and bumps its platform pin → publishes a new team module version → projects test and bump their team module pin. That’s three coordinated releases for one underlying change. At small scale this is overhead. At large scale it’s necessary governance.</p>
+<h3 id="over-abstraction-risk">Over-abstraction Risk</h3>
+<p>The hierarchy works when the abstraction layers are well-designed. If the team module exposes too few variables, project engineers hit walls— the module does almost what they need but not quite, and there’s no way to customise it. They either fork the module (defeating the purpose) or open a request to the team module owners and wait. Getting the variable surface area right at each layer is the hard design problem, and it’s usually discovered through friction rather than upfront planning.</p>
+<h3 id="cognitive-distance-from-resources">Cognitive Distance from Resources</h3>
+<p>In a flat module, an engineer can read the module source and understand exactly what gets deployed. In a three-tier hierarchy, understanding what a project module actually creates requires reading three separate codebases. Engineers working only at the project level may have a limited mental model of the actual AWS resources being provisioned.</p>
+<hr>
+<h2 id="comparison">Comparison</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Dimension</th><th>Flat Module</th><th>Nested Hierarchy</th></tr></thead><tbody><tr><td><strong>Standards enforcement</strong></td><td>Documentation, trust</td><td>Hardcoded in higher layers</td></tr><tr><td><strong>Blast radius of changes</strong></td><td>All callers affected immediately</td><td>Isolated by layer version pins</td></tr><tr><td><strong>Project config size</strong></td><td>Full variable set</td><td>Only project-unique variables</td></tr><tr><td><strong>Debugging</strong></td><td>One layer deep</td><td>Three layers deep</td></tr><tr><td><strong>Version management</strong></td><td>One version per module</td><td>Version per layer, upgrade chain</td></tr><tr><td><strong>Flexibility at project</strong></td><td>Full control</td><td>Limited to what team module exposes</td></tr><tr><td><strong>Right for</strong></td><td>Small teams, single ownership</td><td>Platform teams serving many teams</td></tr></tbody></table>
+<hr>
+<h2 id="when-to-add-a-layer">When to Add a Layer</h2>
+<p>Adding a module tier makes sense when:</p>
+<ul>
+<li>A distinct team owns and gates changes to that layer (platform team, not just a shared folder)</li>
+<li>The layer encapsulates decisions that every downstream consumer should inherit without thinking about them</li>
+<li>The upgrade cycle between layers needs to be decoupled - platform ships on their cadence, teams consume on theirs</li>
+</ul>
+<p>Adding a layer for the sake of organisation, without the ownership and decoupling benefits, just adds indirection. A well-factored flat module is better than a poorly justified hierarchy.</p>
+<hr>
+<h2 id="closing-thoughts">Closing Thoughts</h2>
+<p>Flat modules solve the DRY problem. Nested hierarchies solve the governance and decoupling problem. The single module I was writing before my current organization was the right tool for a single team owning all the infrastructure. The three-tier hierarchy at my current organization was the right tool for a platform team that needed to enforce organisation-wide standards while letting individual teams move at their own pace.</p>
+<p>The cost is real— debugging gets harder, version management gets more complex, and the abstraction can hide too much if the variable surfaces aren’t designed carefully. But when a platform team needs confidence that every project is tagging resources correctly, enabling the right security controls, and not diverging from architectural standards, the hierarchy earns its complexity.</p>
+<hr>
+<h3 id="further-reading">Further Reading</h3>
+<ul>
+<li><a href="https://developer.hashicorp.com/terraform/language/modules">Terraform module documentation</a> - official reference for module sources, version constraints, and input/output patterns</li>
+<li><a href="https://developer.hashicorp.com/terraform/language/modules/develop/composition">Terraform module composition</a> - HashiCorp’s own guidance on when to nest modules and when to keep them flat</li>
+<li><a href="https://developer.hashicorp.com/terraform/registry/modules/publish">Terraform Registry module publishing</a> - requirements and process for publishing versioned modules to a registry, which is the right distribution mechanism for platform modules</li>
+</ul>  </article> </main>  <script type="module">let r=null;const a=e=>new Promise((o,n)=>{if(document.querySelector(`script[src="${e}"]`)){o();return}const t=document.createElement("script");t.src=e,t.onload=()=>o(),t.onerror=()=>n(),document.head.appendChild(t)}),s=async()=>{const e=document.getElementById("vanta-bg");if(!(!e||r))try{await a("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"),await a("https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.dots.min.js"),r=window.VANTA.DOTS({el:"#vanta-bg",mouseControls:!0,touchControls:!0,gyroControls:!0,color:6990720,color2:3355440,backgroundColor:789516,size:2.5,spacing:38,showLines:!1}),e.style.opacity="1"}catch{}};document.addEventListener("astro:page-load",async()=>{await s();const e=document.getElementById("vanta-overlay");if(!e)return;if(!!document.getElementById("hero")){let n;n=()=>{const t=Math.min(1,window.scrollY/window.innerHeight);e.style.opacity=String(t),e.style.background=`rgba(12,12,12,${t*.65})`},window.addEventListener("scroll",n,{passive:!0}),n(),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("scroll",n)},{once:!0})}else e.style.opacity="1",e.style.background="rgba(12,12,12,0.65)"});</script> </body></html> <script type="module">document.addEventListener("astro:page-load",()=>{document.getElementById("back-btn")?.addEventListener("click",()=>{history.length>1?history.back():window.location.href="/"})});</script>

@@ -1,0 +1,209 @@
+<!DOCTYPE html><html lang="en" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="A practical breakdown of Terraform remote state on AWS -- when S3 alone is enough and when DynamoDB state locking is worth the added complexity."><meta name="theme-color" content="#0c0c0c"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><title>Terraform Remote State: S3 Only vs S3 + DynamoDB Locking — irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.14eF8cIR.js"></script><link rel="stylesheet" href="/_astro/_slug_.ClgX1IQp.css"><script type="module" src="/_astro/page.BrtTna5W.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body> <div id="vanta-bg" class="fixed inset-0 pointer-events-none" style="z-index:-20;opacity:0;transition:opacity 0.8s ease" data-astro-transition-persist="astro-n6ay7iuf-2"></div> <div id="vanta-overlay" class="fixed inset-0 pointer-events-none" style="z-index:-10;backdrop-filter:blur(2px);background:rgba(12,12,12,0);opacity:0" data-astro-transition-persist="astro-hpledfl6-3"></div>  <main class="max-w-2xl mx-auto px-6 pb-24"> <header class="sticky top-0 bg-background/60 backdrop-blur-sm z-10 pt-8 pb-5 mb-12 border-b border-border"> <button id="back-btn" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-accent transition-colors mb-4 cursor-pointer bg-transparent border-0 p-0"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <path d="M19 12H5M12 5l-7 7 7 7"></path> </svg>
+posts
+</button> <h1 class="text-2xl font-semibold text-foreground mb-3 leading-snug" data-pagefind-meta="title">Terraform Remote State: S3 Only vs S3 + DynamoDB Locking</h1> <div class="flex flex-wrap items-center gap-3"> <time class="text-sm text-muted">9 December 2025</time>  <span class="text-border">·</span> <span class="text-sm text-muted">7 min read</span>   <span class="text-border">·</span> <div class="flex flex-wrap gap-1.5"> <span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">AWS</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Terraform</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">DevOps</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">IaC</span> </div>  </div> </header> <article class="prose prose-sm max-w-none" data-pagefind-body>  <blockquote>
+<p><strong>Disclaimer:</strong> This article reflects my own experience and setup. Your team size, pipeline structure, and risk tolerance will influence which approach fits best. Use this as a reference, not a prescription.</p>
+</blockquote>
+<p>Terraform state is a single source of truth for your infrastructure. By default it lives in a local <code>terraform.tfstate</code> file, which works fine until two people run <code>terraform apply</code> at the same time and one of them overwrites the other’s changes with a stale state. Remote state on S3 solves the storage problem. DynamoDB locking solves the concurrency problem. They are separate concerns, and whether you need both depends on how your team works.</p>
+<hr>
+<h2 id="what-remote-state-actually-does">What Remote State Actually Does</h2>
+<p>When you configure an S3 backend, Terraform reads the state file from S3 before planning and writes it back after applying. Every team member and every CI/CD pipeline works from the same state, so there’s no drift between what one person’s local file says and what actually exists in AWS.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="hcl"><code><span class="line"><span style="color:#B392F0">terraform</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">  backend</span><span style="color:#79B8FF"> "s3"</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    bucket</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "my-tfstate-bucket"</span></span>
+<span class="line"><span style="color:#E1E4E8">    key</span><span style="color:#F97583">    =</span><span style="color:#9ECBFF"> "project/terraform.tfstate"</span></span>
+<span class="line"><span style="color:#E1E4E8">    region</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "ap-southeast-5"</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>That’s the minimum. No DynamoDB, no locking - just shared state storage.</p>
+<hr>
+<h2 id="s3-only">S3 Only</h2>
+<h3 id="what-you-get">What You Get</h3>
+<ul>
+<li><strong>Shared state</strong> across all team members and pipelines - everyone reads and writes the same file</li>
+<li><strong>Versioning</strong> - enable S3 versioning on the bucket and you get a full history of every state change, with the ability to roll back to a previous version manually</li>
+<li><strong>Encryption at rest</strong> - enable SSE-S3 or SSE-KMS on the bucket; state files contain resource IDs, ARNs, and sometimes sensitive outputs, so this matters</li>
+<li><strong>Simple setup</strong> - one S3 bucket, no other AWS resources required</li>
+</ul>
+<h3 id="what-you-give-up">What You Give Up</h3>
+<ul>
+<li><strong>No concurrency protection</strong> - if two <code>terraform apply</code> runs start at the same time against the same state key, the second one reads stale state, plans against it, and writes back a conflicting result. The last write wins, and the first one’s changes may be silently lost or partially overwritten</li>
+<li><strong>No visibility into who holds state</strong> - there’s no way to know if someone else is mid-apply before you start</li>
+</ul>
+<h3 id="when-s3-only-is-enough">When S3 Only Is Enough</h3>
+<p>S3 alone is a reasonable choice when:</p>
+<ul>
+<li>You are the only person running Terraform against this state</li>
+<li>Your CI/CD pipeline serialises applies - only one pipeline job can run <code>terraform apply</code> at a time (e.g., a single GitHub Actions job with no parallel runs)</li>
+<li>The infrastructure is low-risk enough that a corrupted state is recoverable quickly from S3 version history</li>
+</ul>
+<p>For solo projects, personal infrastructure, or tightly controlled pipelines, the DynamoDB table is overhead with no practical benefit.</p>
+<hr>
+<h2 id="s3--dynamodb-locking">S3 + DynamoDB Locking</h2>
+<p>DynamoDB locking adds a distributed lock on top of S3 state. When Terraform starts an operation that modifies state (plan with <code>-out</code>, apply, destroy), it writes a lock entry to the DynamoDB table. Any other Terraform process that tries to acquire the same lock while it’s held gets an error:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Error: Error acquiring the state lock</span></span>
+<span class="line"><span>Lock Info:</span></span>
+<span class="line"><span>  ID:        a1b2c3d4-...</span></span>
+<span class="line"><span>  Path:      project/terraform.tfstate</span></span>
+<span class="line"><span>  Operation: OperationTypeApply</span></span>
+<span class="line"><span>  Who:       irfan@hostname</span></span>
+<span class="line"><span>  Version:   1.9.0</span></span>
+<span class="line"><span>  Created:   2025-10-13 08:22:11</span></span></code></pre>
+<p>The lock is released when the operation completes. If a process crashes mid-apply and leaves a stale lock, it can be force-unlocked with <code>terraform force-unlock &#x3C;lock-id></code>.</p>
+<h3 id="configuration">Configuration</h3>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="hcl"><code><span class="line"><span style="color:#B392F0">terraform</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#B392F0">  backend</span><span style="color:#79B8FF"> "s3"</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    bucket</span><span style="color:#F97583">         =</span><span style="color:#9ECBFF"> "my-tfstate-bucket"</span></span>
+<span class="line"><span style="color:#E1E4E8">    key</span><span style="color:#F97583">            =</span><span style="color:#9ECBFF"> "project/terraform.tfstate"</span></span>
+<span class="line"><span style="color:#E1E4E8">    region</span><span style="color:#F97583">         =</span><span style="color:#9ECBFF"> "ap-southeast-5"</span></span>
+<span class="line"><span style="color:#E1E4E8">    dynamodb_table</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "terraform-state-lock"</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>The DynamoDB table needs a single partition key named <code>LockID</code> of type <code>String</code>. Nothing else is required.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="hcl"><code><span class="line"><span style="color:#B392F0">resource</span><span style="color:#79B8FF"> "aws_dynamodb_table"</span><span style="color:#79B8FF"> "tf_state_lock"</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">  name</span><span style="color:#F97583">         =</span><span style="color:#9ECBFF"> "terraform-state-lock"</span></span>
+<span class="line"><span style="color:#E1E4E8">  billing_mode</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "PAY_PER_REQUEST"</span></span>
+<span class="line"><span style="color:#E1E4E8">  hash_key</span><span style="color:#F97583">     =</span><span style="color:#9ECBFF"> "LockID"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">  attribute</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#E1E4E8">    name</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "LockID"</span></span>
+<span class="line"><span style="color:#E1E4E8">    type</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "S"</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p><code>PAY_PER_REQUEST</code> is the right billing mode here. The table gets one write per apply and one delete when the lock is released - the traffic is negligible and provisioned capacity would be wasteful.</p>
+<h3 id="what-you-get-1">What You Get</h3>
+<ul>
+<li><strong>Concurrency protection</strong> - two simultaneous applies against the same state key cannot both proceed; one will fail fast with a clear error rather than silently corrupting state</li>
+<li><strong>Audit trail</strong> - the lock entry records who started the operation, on which machine, at what time, using which Terraform version</li>
+<li><strong>Safe for teams and parallel pipelines</strong> - multiple engineers or multiple CI jobs can attempt applies without coordination; the lock serialises them automatically</li>
+</ul>
+<h3 id="what-you-give-up-1">What You Give Up</h3>
+<ul>
+<li><strong>One more AWS resource to manage</strong> - the DynamoDB table itself needs to exist before <code>terraform init</code> can succeed against this backend, which creates a bootstrapping problem (more on this below)</li>
+<li><strong>Marginal cost</strong> - negligible with PAY_PER_REQUEST, but non-zero</li>
+<li><strong>False safety for long-running applies</strong> - the lock prevents concurrent applies but doesn’t prevent someone from force-unlocking a lock that’s legitimately held by a slow apply and then running their own apply on top of it</li>
+</ul>
+<hr>
+<h2 id="the-bootstrapping-problem">The Bootstrapping Problem</h2>
+<p>Both the S3 bucket and the DynamoDB table must exist before you can run <code>terraform init</code> with this backend. You can’t use Terraform to create them in the same configuration that uses them as a backend - that’s a chicken-and-egg problem.</p>
+<p>Common solutions:</p>
+<ul>
+<li><strong>Create them manually</strong> via the AWS Console or CLI, then never touch them with Terraform</li>
+<li><strong>Use a separate bootstrap Terraform configuration</strong> that has a local backend, creates the bucket and table, and is only ever run once</li>
+</ul>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D"># Bootstrap the state infrastructure manually</span></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> s3api</span><span style="color:#9ECBFF"> create-bucket</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --bucket</span><span style="color:#9ECBFF"> my-tfstate-bucket</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --region</span><span style="color:#9ECBFF"> ap-southeast-5</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --create-bucket-configuration</span><span style="color:#9ECBFF"> LocationConstraint=ap-southeast-5</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> s3api</span><span style="color:#9ECBFF"> put-bucket-versioning</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --bucket</span><span style="color:#9ECBFF"> my-tfstate-bucket</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --versioning-configuration</span><span style="color:#9ECBFF"> Status=Enabled</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#B392F0">aws</span><span style="color:#9ECBFF"> dynamodb</span><span style="color:#9ECBFF"> create-table</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --table-name</span><span style="color:#9ECBFF"> terraform-state-lock</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --attribute-definitions</span><span style="color:#9ECBFF"> AttributeName=LockID,AttributeType=S</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --key-schema</span><span style="color:#9ECBFF"> AttributeName=LockID,KeyType=HASH</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --billing-mode</span><span style="color:#9ECBFF"> PAY_PER_REQUEST</span><span style="color:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#79B8FF">  --region</span><span style="color:#9ECBFF"> ap-southeast-5</span></span></code></pre>
+<hr>
+<h2 id="side-by-side-comparison">Side-by-Side Comparison</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Dimension</th><th>S3 Only</th><th>S3 + DynamoDB</th></tr></thead><tbody><tr><td><strong>Concurrent apply safety</strong></td><td>None</td><td>Full lock with error on conflict</td></tr><tr><td><strong>State history</strong></td><td>Yes (with S3 versioning)</td><td>Yes (with S3 versioning)</td></tr><tr><td><strong>Who-is-applying visibility</strong></td><td>None</td><td>Yes, in lock entry</td></tr><tr><td><strong>Setup complexity</strong></td><td>One S3 bucket</td><td>S3 bucket + DynamoDB table</td></tr><tr><td><strong>Cost</strong></td><td>S3 storage only (~cents/month)</td><td>S3 + DynamoDB (still negligible)</td></tr><tr><td><strong>Right for solo use</strong></td><td>Yes</td><td>Yes, but unnecessary</td></tr><tr><td><strong>Right for teams</strong></td><td>Only if pipeline serialises applies</td><td>Yes</td></tr><tr><td><strong>Bootstrapping required</strong></td><td>S3 bucket only</td><td>S3 bucket + DynamoDB table</td></tr></tbody></table>
+<hr>
+<h2 id="closing-thoughts">Closing Thoughts</h2>
+<p>The decision comes down to one question: <strong>can two Terraform applies against this state run at the same time?</strong></p>
+<p>If the answer is no - solo project, serialised CI, single pipeline job - S3 alone is sufficient. Versioning handles recovery, and the DynamoDB table adds complexity without a practical benefit.</p>
+<p>If the answer is yes or maybe - multiple engineers, parallel CI jobs, no pipeline-level serialisation - add DynamoDB. The cost is negligible, the setup is a one-time ten-minute job, and it prevents the kind of state corruption that is genuinely painful to recover from.</p>
+<hr>
+<h3 id="further-reading">Further Reading</h3>
+<ul>
+<li><a href="https://developer.hashicorp.com/terraform/language/backend/s3">Terraform S3 backend documentation</a> - full reference for all backend configuration options including encryption, role assumption, and workspace key prefixes</li>
+<li><a href="https://developer.hashicorp.com/terraform/language/state/locking">Terraform state locking</a> - how locking works across different backends, and when <code>terraform force-unlock</code> is appropriate</li>
+<li><a href="https://aws.amazon.com/blogs/aws/terraform-state-management-with-amazon-s3-and-amazon-dynamodb/">S3 backend with DynamoDB locking - AWS blog</a> - AWS’s own walkthrough of the setup</li>
+</ul>  </article> </main>  <script type="module">let r=null;const a=e=>new Promise((o,n)=>{if(document.querySelector(`script[src="${e}"]`)){o();return}const t=document.createElement("script");t.src=e,t.onload=()=>o(),t.onerror=()=>n(),document.head.appendChild(t)}),s=async()=>{const e=document.getElementById("vanta-bg");if(!(!e||r))try{await a("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"),await a("https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.dots.min.js"),r=window.VANTA.DOTS({el:"#vanta-bg",mouseControls:!0,touchControls:!0,gyroControls:!0,color:6990720,color2:3355440,backgroundColor:789516,size:2.5,spacing:38,showLines:!1}),e.style.opacity="1"}catch{}};document.addEventListener("astro:page-load",async()=>{await s();const e=document.getElementById("vanta-overlay");if(!e)return;if(!!document.getElementById("hero")){let n;n=()=>{const t=Math.min(1,window.scrollY/window.innerHeight);e.style.opacity=String(t),e.style.background=`rgba(12,12,12,${t*.65})`},window.addEventListener("scroll",n,{passive:!0}),n(),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("scroll",n)},{once:!0})}else e.style.opacity="1",e.style.background="rgba(12,12,12,0.65)"});</script> </body></html> <script type="module">document.addEventListener("astro:page-load",()=>{document.getElementById("back-btn")?.addEventListener("click",()=>{history.length>1?history.back():window.location.href="/"})});</script>

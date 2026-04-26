@@ -1,0 +1,239 @@
+<!DOCTYPE html><html lang="en" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content="How I replaced a years-old manual Windows EC2 patching ritual-- RDP in, download the KB, patch, reboot, and sanity check with a fully automated pipeline using Lambda, EventBridge, and an SSM Automation Document."><meta name="theme-color" content="#0c0c0c"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"><title>Automating Windows EC2 Patching with Lambda, EventBridge, and SSM Automation — irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.14eF8cIR.js"></script><link rel="stylesheet" href="/_astro/_slug_.ClgX1IQp.css"><script type="module" src="/_astro/page.BrtTna5W.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body> <div id="vanta-bg" class="fixed inset-0 pointer-events-none" style="z-index:-20;opacity:0;transition:opacity 0.8s ease" data-astro-transition-persist="astro-n6ay7iuf-2"></div> <div id="vanta-overlay" class="fixed inset-0 pointer-events-none" style="z-index:-10;backdrop-filter:blur(2px);background:rgba(12,12,12,0);opacity:0" data-astro-transition-persist="astro-hpledfl6-3"></div>  <main class="max-w-2xl mx-auto px-6 pb-24"> <header class="sticky top-0 bg-background/60 backdrop-blur-sm z-10 pt-8 pb-5 mb-12 border-b border-border"> <button id="back-btn" class="inline-flex items-center gap-1.5 text-sm text-muted hover:text-accent transition-colors mb-4 cursor-pointer bg-transparent border-0 p-0"> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <path d="M19 12H5M12 5l-7 7 7 7"></path> </svg>
+posts
+</button> <h1 class="text-2xl font-semibold text-foreground mb-3 leading-snug" data-pagefind-meta="title">Automating Windows EC2 Patching with Lambda, EventBridge, and SSM Automation</h1> <div class="flex flex-wrap items-center gap-3"> <time class="text-sm text-muted">13 October 2025</time>  <span class="text-border">·</span> <span class="text-sm text-muted">8 min read</span>   <span class="text-border">·</span> <div class="flex flex-wrap gap-1.5"> <span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">AWS</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">DevOps</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Automation</span><span class="text-xs text-accent border border-accent rounded-full px-2 py-0.5">Security</span> </div>  </div> </header> <article class="prose prose-sm max-w-none" data-pagefind-body>  <p>Every second Tuesday of the month, Microsoft drops Patch Tuesday. For years before I touched it, the response at my team was the same ritual: RDP into the Windows EC2 via SSM, download the relevant KB manually, apply it, reboot, run a sanity check, and take a backup before and after. Whoever owned that task did it by hand, every month, without fail. Then it got handed to me. I did it manually for a few cycles before deciding that no engineer should spend part of their Thursday doing something a Lambda function can do better.</p>
+<hr>
+<h2 id="why-thursday-not-tuesday">Why Thursday, Not Tuesday</h2>
+<p>Patch Thursday is a real pattern in enterprise Windows administration. Microsoft releases patches on the second Tuesday, but organisations with any production exposure don’t apply them immediately— they wait 48 hours to let the community surface any regressions. Applying on the Thursday after give engineers time to catch the “this patch breaks X” posts on the forums before they’ve already applied it to a server that matters.</p>
+<p>So the schedule I needed wasn’t a simple cron. It was: <strong>the Thursday that falls two days after the second Tuesday of the month</strong>. That’s not something EventBridge can express natively.</p>
+<hr>
+<h2 id="the-architecture">The Architecture</h2>
+<p>The solution has three components:</p>
+<ol>
+<li><strong>EventBridge</strong> fires a trigger every Thursday</li>
+<li><strong>Lambda</strong> receives that trigger, calculates whether today is the correct Thursday, and starts the SSM Automation if it is</li>
+<li><strong>SSM Automation Document</strong> runs the actual patching workflow— pre-patch backup, patch, reboot, sanity check, and post-patch backup</li>
+</ol>
+<p>This keeps EventBridge simple and puts the date logic where it belongs: in code.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>EventBridge (every Thursday)</span></span>
+<span class="line"><span>    → Lambda (is this the right Thursday?)</span></span>
+<span class="line"><span>        → SSM Automation Document</span></span>
+<span class="line"><span>            → Step 1: Pre-patch AMI backup</span></span>
+<span class="line"><span>            → Step 2: Run patch baseline</span></span>
+<span class="line"><span>            → Step 3: Reboot</span></span>
+<span class="line"><span>            → Step 4: Sanity check</span></span>
+<span class="line"><span>            → Step 5: Post-patch AMI backup</span></span></code></pre>
+<hr>
+<h2 id="step-1-the-date-calculation-in-lambda">Step 1: The Date Calculation in Lambda</h2>
+<p>The Lambda function does one thing before touching SSM: verify today is the Thursday after the second Tuesday of the current month.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> boto3</span></span>
+<span class="line"><span style="color:#F97583">import</span><span style="color:#E1E4E8"> datetime</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> get_patch_thursday</span><span style="color:#E1E4E8">(year: </span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">, month: </span><span style="color:#79B8FF">int</span><span style="color:#E1E4E8">) -> datetime.date:</span></span>
+<span class="line"><span style="color:#E1E4E8">    first </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> datetime.date(year, month, </span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D">    # weekday(): Monday=0, Tuesday=1, Thursday=3</span></span>
+<span class="line"><span style="color:#E1E4E8">    days_to_first_tuesday </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">1</span><span style="color:#F97583"> -</span><span style="color:#E1E4E8"> first.weekday()) </span><span style="color:#F97583">%</span><span style="color:#79B8FF"> 7</span></span>
+<span class="line"><span style="color:#E1E4E8">    first_tuesday </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> first </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> datetime.timedelta(</span><span style="color:#FFAB70">days</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">days_to_first_tuesday)</span></span>
+<span class="line"><span style="color:#E1E4E8">    second_tuesday </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> first_tuesday </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> datetime.timedelta(</span><span style="color:#FFAB70">weeks</span><span style="color:#F97583">=</span><span style="color:#79B8FF">1</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> second_tuesday </span><span style="color:#F97583">+</span><span style="color:#E1E4E8"> datetime.timedelta(</span><span style="color:#FFAB70">days</span><span style="color:#F97583">=</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> handler</span><span style="color:#E1E4E8">(event, context):</span></span>
+<span class="line"><span style="color:#E1E4E8">    today </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> datetime.date.today()</span></span>
+<span class="line"><span style="color:#E1E4E8">    patch_thursday </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> get_patch_thursday(today.year, today.month)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> today </span><span style="color:#F97583">!=</span><span style="color:#E1E4E8"> patch_thursday:</span></span>
+<span class="line"><span style="color:#79B8FF">        print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"Today is </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">today</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">. Patch Thursday is </span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">patch_thursday</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">. Skipping."</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">        return</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">"status"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"skipped"</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#79B8FF">    print</span><span style="color:#E1E4E8">(</span><span style="color:#F97583">f</span><span style="color:#9ECBFF">"Today is Patch Thursday (</span><span style="color:#79B8FF">{</span><span style="color:#E1E4E8">today</span><span style="color:#79B8FF">}</span><span style="color:#9ECBFF">). Starting SSM Automation."</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    start_automation()</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">"status"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"started"</span><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>The <code>(1 - first.weekday()) % 7</code> expression handles the edge case where the 1st of the month is already a Tuesday - without the modulo it would return 0 and land on the 1st rather than the 8th.</p>
+<hr>
+<h2 id="step-2-eventbridge-rule">Step 2: EventBridge Rule</h2>
+<p>The rule fires every Thursday at a fixed time— early enough that the patch window completes during business hours so someone is around if something goes wrong. (Make sure business stakeholders are informed earlier HAHA)</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "ScheduleExpression"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"cron(0 1 ? * 5 *)"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "Description"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Fire every Thursday at 01:00 UTC for Windows EC2 patch check"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Weekday <code>5</code> in EventBridge cron is Thursday (Sunday=1, Monday=2, …, Thursday=5). The Lambda function filters down to the correct Thursday.</p>
+<hr>
+<h2 id="step-3-the-ssm-automation-document">Step 3: The SSM Automation Document</h2>
+<p>This is where the actual work happens. The document mirrors the old manual steps exactly— I just turned each step of the runbook into an SSM action.</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">schemaVersion</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"0.3"</span></span>
+<span class="line"><span style="color:#85E89D">description</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Automated Windows EC2 monthly patching"</span></span>
+<span class="line"><span style="color:#85E89D">parameters</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  InstanceId</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">String</span></span>
+<span class="line"><span style="color:#85E89D">    description</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Target Windows EC2 instance ID</span></span>
+<span class="line"><span style="color:#85E89D">mainSteps</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">PrePatchBackup</span></span>
+<span class="line"><span style="color:#85E89D">    action</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">aws:createImage</span></span>
+<span class="line"><span style="color:#85E89D">    inputs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      InstanceId</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"{{ InstanceId }}"</span></span>
+<span class="line"><span style="color:#85E89D">      ImageName</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"pre-patch-{{ InstanceId }}-{{ global:DATE_TIME }}"</span></span>
+<span class="line"><span style="color:#85E89D">      NoReboot</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">    outputs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">Name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">PrePatchAmiId</span></span>
+<span class="line"><span style="color:#85E89D">        Selector</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">$.ImageId</span></span>
+<span class="line"><span style="color:#85E89D">        Type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">String</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ApplyPatchBaseline</span></span>
+<span class="line"><span style="color:#85E89D">    action</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">aws:runCommand</span></span>
+<span class="line"><span style="color:#85E89D">    inputs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      DocumentName</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">AWS-RunPatchBaseline</span></span>
+<span class="line"><span style="color:#85E89D">      InstanceIds</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">"{{ InstanceId }}"</span></span>
+<span class="line"><span style="color:#85E89D">      Parameters</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        Operation</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">Install</span></span>
+<span class="line"><span style="color:#85E89D">        RebootOption</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">NoReboot</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">RebootInstance</span></span>
+<span class="line"><span style="color:#85E89D">    action</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">aws:executeAwsApi</span></span>
+<span class="line"><span style="color:#85E89D">    inputs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      Service</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ec2</span></span>
+<span class="line"><span style="color:#85E89D">      Api</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">RebootInstances</span></span>
+<span class="line"><span style="color:#85E89D">      InstanceIds</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">"{{ InstanceId }}"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">WaitForInstanceReady</span></span>
+<span class="line"><span style="color:#85E89D">    action</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">aws:waitForAwsResourceProperty</span></span>
+<span class="line"><span style="color:#85E89D">    inputs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      Service</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ssm</span></span>
+<span class="line"><span style="color:#85E89D">      Api</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">DescribeInstanceInformation</span></span>
+<span class="line"><span style="color:#85E89D">      Filters</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#85E89D">Key</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">InstanceIds</span></span>
+<span class="line"><span style="color:#85E89D">          Values</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            - </span><span style="color:#9ECBFF">"{{ InstanceId }}"</span></span>
+<span class="line"><span style="color:#85E89D">      PropertySelector</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"$.InstanceInformationList[0].PingStatus"</span></span>
+<span class="line"><span style="color:#85E89D">      DesiredValues</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">Online</span></span>
+<span class="line"><span style="color:#85E89D">    timeoutSeconds</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">600</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">SanityCheck</span></span>
+<span class="line"><span style="color:#85E89D">    action</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">aws:runCommand</span></span>
+<span class="line"><span style="color:#85E89D">    inputs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      DocumentName</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">AWS-RunPowerShellScript</span></span>
+<span class="line"><span style="color:#85E89D">      InstanceIds</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">        - </span><span style="color:#9ECBFF">"{{ InstanceId }}"</span></span>
+<span class="line"><span style="color:#85E89D">      Parameters</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">        commands</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">          - </span><span style="color:#F97583">|</span></span>
+<span class="line"><span style="color:#9ECBFF">            $services = Get-Service | Where-Object { $_.StartType -eq 'Automatic' -and $_.Status -ne 'Running' }</span></span>
+<span class="line"><span style="color:#9ECBFF">            if ($services) {</span></span>
+<span class="line"><span style="color:#9ECBFF">              Write-Output "WARNING: The following auto-start services are not running:"</span></span>
+<span class="line"><span style="color:#9ECBFF">              $services | Select-Object Name, Status | Format-Table</span></span>
+<span class="line"><span style="color:#9ECBFF">              exit 1</span></span>
+<span class="line"><span style="color:#9ECBFF">            }</span></span>
+<span class="line"><span style="color:#9ECBFF">            Write-Output "Sanity check passed. All automatic services are running."</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">PostPatchBackup</span></span>
+<span class="line"><span style="color:#85E89D">    action</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">aws:createImage</span></span>
+<span class="line"><span style="color:#85E89D">    inputs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      InstanceId</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"{{ InstanceId }}"</span></span>
+<span class="line"><span style="color:#85E89D">      ImageName</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"post-patch-{{ InstanceId }}-{{ global:DATE_TIME }}"</span></span>
+<span class="line"><span style="color:#85E89D">      NoReboot</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">true</span></span>
+<span class="line"><span style="color:#85E89D">    outputs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">      - </span><span style="color:#85E89D">Name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">PostPatchAmiId</span></span>
+<span class="line"><span style="color:#85E89D">        Selector</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">$.ImageId</span></span>
+<span class="line"><span style="color:#85E89D">        Type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">String</span></span></code></pre>
+<p>A few things worth calling out:</p>
+<ul>
+<li><strong><code>NoReboot: true</code> on the AMI steps</strong> - the pre-patch backup uses it so the instance stays up during snapshot. The post-patch backup uses it for the same reason; SSM has already rebooted the instance in a controlled step.</li>
+<li><strong><code>AWS-RunPatchBaseline</code> with <code>NoReboot</code></strong> - by default, AWS’s patch baseline document reboots after applying. Setting <code>RebootOption: NoReboot</code> hands reboot control back to the automation document so it happens as its own tracked step, not silently inside the patch step.</li>
+<li><strong><code>WaitForInstanceReady</code></strong> - SSM loses contact with the instance during reboot. This step polls until the SSM agent comes back online before proceeding. Without it, the sanity check step fires against an instance that’s still coming up and fails intermittently.</li>
+<li><strong>Sanity check</strong> - the PowerShell checks that all services configured to start automatically are actually running. It’s not exhaustive, but it catches the most common post-patch regression: a service that was running before the patch isn’t running after. If the check fails, the automation halts with a non-zero exit and the post-patch backup is never taken - which is a useful signal that something needs attention. This sanity check can be customized depending on requirements.</li>
+</ul>
+<hr>
+<h2 id="step-4-triggering-ssm-from-lambda">Step 4: Triggering SSM from Lambda</h2>
+<p>The <code>start_automation</code> function passes the instance ID and lets SSM handle execution:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> start_automation</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#E1E4E8">    ssm </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> boto3.client(</span><span style="color:#9ECBFF">"ssm"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">    ssm.start_automation_execution(</span></span>
+<span class="line"><span style="color:#FFAB70">        DocumentName</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"WindowsEC2MonthlyPatch"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#FFAB70">        Parameters</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#9ECBFF">            "InstanceId"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"i-0abc1234def56789"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#E1E4E8">    )</span></span></code></pre>
+<blockquote>
+<p><strong>Note:</strong> Step 1 and Step 4 are not two separate Lambda functions — they belong in the same one. The date check and the SSM trigger are both in <code>handler()</code>. The steps are split here for readability, but in the actual deployment it is a single Lambda file.</p>
+</blockquote>
+<hr>
+<h2 id="iam-permissions">IAM Permissions</h2>
+<p>The Lambda execution role needs:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "Effect"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Allow"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "Action"</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">"ssm:StartAutomationExecution"</span><span style="color:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#79B8FF">  "Resource"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"arn:aws:ssm:REGION:ACCOUNT_ID:automation-definition/WindowsEC2MonthlyPatch:*"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>The SSM Automation Document itself runs with a separate IAM role that needs:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#79B8FF">  "Effect"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"Allow"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#79B8FF">  "Action"</span><span style="color:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#9ECBFF">    "ec2:CreateImage"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "ec2:DescribeImages"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "ec2:RebootInstances"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "ssm:SendCommand"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "ssm:DescribeInstanceInformation"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">    "ssm:GetCommandInvocation"</span></span>
+<span class="line"><span style="color:#E1E4E8">  ],</span></span>
+<span class="line"><span style="color:#79B8FF">  "Resource"</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"*"</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span></code></pre>
+<p>Keep these two roles separate. The Lambda role should only be able to start the automation, not perform EC2 or SSM operations directly.</p>
+<hr>
+<h2 id="network-requirement-s3-access">Network Requirement: S3 Access</h2>
+<p><code>AWS-RunPatchBaseline</code> doesn’t pull patches from the internet directly— it downloads them from AWS-managed S3 buckets in the same region as the instance. If the EC2 sits in a private subnet with no outbound internet route, patching will silently fail at the download step.</p>
+<p>The fix is an S3 VPC endpoint (Gateway type, free) attached to the route table of the instance’s subnet:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>com.amazonaws.REGION.s3</span></span></code></pre>
+<p>This lets the instance reach the patch content buckets without routing through a NAT Gateway or internet gateway. If a NAT Gateway for other outbound traffic is already there, S3 access will work through that too— but the VPC endpoint is cleaner and avoids the per-GB NAT cost for patch downloads.</p>
+<p>Confirm the instance can reach the required S3 buckets by running this from the instance before the first automation run:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="powershell"><code><span class="line"><span style="color:#79B8FF">Invoke-WebRequest</span><span style="color:#F97583"> -</span><span style="color:#E1E4E8">Uri </span><span style="color:#9ECBFF">"https://s3.REGION.amazonaws.com"</span><span style="color:#F97583"> -</span><span style="color:#E1E4E8">UseBasicParsing</span></span></code></pre>
+<p>If it times out, the network path isn’t there. Fix the endpoint or route before wiring up the automation.</p>
+<hr>
+<h2 id="what-changed">What Changed</h2>
+<p>Before automation, patching took around 45 minutes per server— SSM RDP session, KB download, patch application, wait for reboot, sanity walkthrough, two manual AMI snapshots. The process solely depended if I remember to do it.</p>
+<p>Now the Lambda fires, verifies the date, and hands off to SSM. The automation document runs the same sequence in under 20 minutes with full execution logs in SSM and AMI snapshots in EC2. If the sanity check fails, the automation stops and the missing post-patch AMI is the signal to investigate. No one needs to remember the date, no one needs to be at their desk.</p>
+<p>The manual runbook still exists— it’s useful if the automation itself needs to be bypassed for a specific month. But it’s documentation now, not a monthly obligation.</p>
+<hr>
+<h3 id="further-reading">Further Reading</h3>
+<ul>
+<li><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-actions.html">AWS Systems Manager Automation actions reference</a> - full list of SSM Automation step types including <code>aws:createImage</code>, <code>aws:runCommand</code>, and <code>aws:waitForAwsResourceProperty</code></li>
+<li><a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-aws-runpatchbaseline.html">AWS-RunPatchBaseline document</a> - parameters and reboot behaviour for the managed patch baseline runner</li>
+<li><a href="https://docs.aws.amazon.com/scheduler/latest/UserGuide/schedule-types.html#cron-based">EventBridge cron expression syntax</a> - weekday numbering and cron field ordering (differs from standard Unix cron)</li>
+<li><a href="https://msrc.microsoft.com/update-guide/">Microsoft Patch Tuesday</a> - the source; also where it is checked if a given month’s patches have known issues before applying</li>
+</ul>  </article> </main>  <script type="module">let r=null;const a=e=>new Promise((o,n)=>{if(document.querySelector(`script[src="${e}"]`)){o();return}const t=document.createElement("script");t.src=e,t.onload=()=>o(),t.onerror=()=>n(),document.head.appendChild(t)}),s=async()=>{const e=document.getElementById("vanta-bg");if(!(!e||r))try{await a("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"),await a("https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.dots.min.js"),r=window.VANTA.DOTS({el:"#vanta-bg",mouseControls:!0,touchControls:!0,gyroControls:!0,color:6990720,color2:3355440,backgroundColor:789516,size:2.5,spacing:38,showLines:!1}),e.style.opacity="1"}catch{}};document.addEventListener("astro:page-load",async()=>{await s();const e=document.getElementById("vanta-overlay");if(!e)return;if(!!document.getElementById("hero")){let n;n=()=>{const t=Math.min(1,window.scrollY/window.innerHeight);e.style.opacity=String(t),e.style.background=`rgba(12,12,12,${t*.65})`},window.addEventListener("scroll",n,{passive:!0}),n(),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("scroll",n)},{once:!0})}else e.style.opacity="1",e.style.background="rgba(12,12,12,0.65)"});</script> </body></html> <script type="module">document.addEventListener("astro:page-load",()=>{document.getElementById("back-btn")?.addEventListener("click",()=>{history.length>1?history.back():window.location.href="/"})});</script>
