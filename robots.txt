@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://irfanadziri.dev/sitemap-index.xml
