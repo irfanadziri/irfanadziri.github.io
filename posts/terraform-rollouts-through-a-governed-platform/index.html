@@ -1,0 +1,277 @@
+<!DOCTYPE html><html lang="en" data-grid="quarter" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="description" content="A field report on a multi-environment Terraform rollout through CI-gated pipelines and shared platform modules: where the time went, the SOP that worked, and what would make it lighter."><link rel="canonical" href="https://irfanadziri.dev/posts/terraform-rollouts-through-a-governed-platform/"><meta property="og:type" content="website"><meta property="og:site_name" content="irfanadziri"><meta property="og:title" content="Shipping Terraform Through a Governed Platform: Where the Time Actually Goes · irfanadziri"><meta property="og:description" content="A field report on a multi-environment Terraform rollout through CI-gated pipelines and shared platform modules: where the time went, the SOP that worked, and what would make it lighter."><meta property="og:url" content="https://irfanadziri.dev/posts/terraform-rollouts-through-a-governed-platform/"><meta property="og:image" content="https://irfanadziri.dev/og/posts/terraform-rollouts-through-a-governed-platform.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Shipping Terraform Through a Governed Platform: Where the Time Actually Goes · irfanadziri"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Shipping Terraform Through a Governed Platform: Where the Time Actually Goes · irfanadziri"><meta name="twitter:description" content="A field report on a multi-environment Terraform rollout through CI-gated pipelines and shared platform modules: where the time went, the SOP that worked, and what would make it lighter."><meta name="twitter:image" content="https://irfanadziri.dev/og/posts/terraform-rollouts-through-a-governed-platform.png"><meta name="theme-color" content="#0D131D"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><title>Shipping Terraform Through a Governed Platform: Where the Time Actually Goes · irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.C-Cw1uW6.js"></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-V5N6BFQPX5"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-V5N6BFQPX5', { send_page_view: false });
+    </script><link rel="stylesheet" href="/_astro/_slug_.CCmwyVuk.css">
+<link rel="stylesheet" href="/_astro/_slug_.B6Rx3xe5.css">
+<style>.article-title[data-astro-cid-ed2fxd7y]{font-family:var(--font-display);font-variation-settings:"wght" 800;letter-spacing:-.01em}.filed-link[data-astro-cid-ed2fxd7y]{color:#5b8dd9e6;border-bottom:1px solid rgba(91,141,217,.35);transition:color .15s,border-color .15s}.filed-link[data-astro-cid-ed2fxd7y]:hover{color:var(--color-signal);border-bottom-color:var(--color-signal)}
+</style><script type="module" src="/_astro/page.Ca9VeHmW.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body> <canvas id="grid-bg" data-astro-transition-persist="grid-bg" aria-hidden="true"></canvas>  <script type="module">const r=document.getElementById("grid-bg");if(r){let u=function(){const o=document.documentElement.dataset.grid??"quarter";return o==="hero"?1-Math.min(window.scrollY/Math.max(window.innerHeight,1),1)*.75:C[o]??.25},x=function(o){e.strokeStyle=h(L,o),e.lineWidth=1,e.beginPath();for(let n=0;n<=g;n++)e.moveTo(n*a+.5,0),e.lineTo(n*a+.5,s);for(let n=0;n<=y;n++)e.moveTo(0,n*a+.5),e.lineTo(i,n*a+.5);e.stroke()},q=function(){const o=Math.random()<.5,n=o?g:y,t=(Math.random()*n|0)*a+.5,c=Math.random()<.5?1:-1;return{vertical:o,lane:t,dir:c,pos:c===1?-m:(o?s:i)+m,speed:(110+Math.random()*130)*c,color:Math.random()<.15?R:L}},B=function(o,n){for(e.setTransform(l,0,0,l,0,0),e.clearRect(0,0,i,s),x(.1),o>k&&(k=o+.2+Math.random()*.4,E.push({c:Math.random()*g|0,r:Math.random()*y|0,life:0,max:2.2+Math.random()*1.8,color:Math.random()<.12?R:L})),E=E.filter(t=>{t.life+=n;const c=t.life/t.max;return c>=1?!1:(e.fillStyle=h(t.color,Math.sin(c*Math.PI)*.13),e.fillRect(t.c*a+1,t.r*a+1,a-1,a-1),!0)});f.length<4&&Math.random()<.025;)f.push(q());f=f.filter(t=>{t.pos+=t.speed*n;const c=t.vertical?s:i;if(t.dir===1?t.pos-m>c:t.pos+m<0)return!1;const p=t.pos-m*t.dir,S=t.vertical?e.createLinearGradient(0,p,0,t.pos):e.createLinearGradient(p,0,t.pos,0);S.addColorStop(0,h(t.color,0)),S.addColorStop(1,h(t.color,.75)),e.strokeStyle=S,e.lineWidth=1.5,e.beginPath(),t.vertical?(e.moveTo(t.lane,p),e.lineTo(t.lane,t.pos)):(e.moveTo(p,t.lane),e.lineTo(t.pos,t.lane)),e.stroke(),e.fillStyle=h(t.color,.9);const I=t.vertical?t.lane:t.pos,W=t.vertical?t.pos:t.lane;return e.beginPath(),e.arc(I,W,1.7,0,Math.PI*2),e.fill(),!0})},A=function(o){const n=Math.min((o-T)/1e3,.05);T=o,B(o/1e3,n),d+=(u()-d)*Math.min(1,n*6),r.style.opacity=d.toFixed(3),v=requestAnimationFrame(A)},M=function(){if(cancelAnimationFrame(v),w.matches){e.setTransform(l,0,0,l,0,0),e.clearRect(0,0,i,s),x(.1),r.style.opacity=String(u());return}T=performance.now(),v=requestAnimationFrame(A)},P=function(){w.matches&&(d=u(),r.style.opacity=String(d))},F=function(){const o=r.clientWidth,n=r.clientHeight;o===i&&n===s||(i=o,s=n,r.width=i*l,r.height=s*l,g=Math.ceil(i/a),y=Math.ceil(s/a),f=[],w.matches&&M())};const e=r.getContext("2d"),l=Math.min(window.devicePixelRatio||1,2),a=48,m=140,L=[91,141,217],R=[229,161,60],h=(o,n)=>`rgba(${o[0]},${o[1]},${o[2]},${n})`;let i=0,s=0,g=0,y=0,E=[],f=[],k=0,v=0,T=0;const w=matchMedia("(prefers-reduced-motion: reduce)"),C={hero:1,half:.5,quarter:.25};let d=u();r.style.opacity=String(d),window.addEventListener("scroll",P,{passive:!0}),document.addEventListener("astro:page-load",P),window.addEventListener("resize",F),document.addEventListener("visibilitychange",()=>{document.hidden?cancelAnimationFrame(v):M()}),w.addEventListener("change",M),F(),M()}</script>  <header id="article-header" class="fixed top-0 z-10 bg-background/60 backdrop-blur-sm border-b border-border" style="left:0;right:0;padding-top:env(safe-area-inset-top)" data-astro-cid-ed2fxd7y> <div class="max-w-2xl mx-auto px-6 pt-8 pb-5" data-astro-cid-ed2fxd7y> <div class="flex items-center justify-between gap-4 mb-4" data-astro-cid-ed2fxd7y> <a href="/posts" class="inline-flex items-center gap-1.5 font-mono text-[0.8125rem] text-muted hover:text-accent transition-colors" data-astro-cid-ed2fxd7y> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-ed2fxd7y> <path d="M19 12H5M12 5l-7 7 7 7" data-astro-cid-ed2fxd7y></path> </svg>
+posts
+</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var l=(n,t)=>{let i=async()=>{await(await n())()},e=typeof t.value=="object"?t.value:void 0,s={timeout:e==null?void 0:e.timeout};"requestIdleCallback"in window?window.requestIdleCallback(i,s):setTimeout(i,s.timeout||200)};(self.Astro||(self.Astro={})).idle=l;window.dispatchEvent(new Event("astro:idle"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="ZIpBsY" prefix="r1" component-url="/_astro/Search.71JpKRkS.js" component-export="default" renderer-url="/_astro/client.DuciY4M5.js" props="{&quot;variant&quot;:[0,&quot;nav&quot;],&quot;data-astro-cid-ed2fxd7y&quot;:[0,true]}" ssr client="idle" opts="{&quot;name&quot;:&quot;Search&quot;,&quot;value&quot;:true}" await-children><button class="group inline-flex items-baseline gap-1.5 text-muted hover:text-accent transition-colors" aria-label="Search (Ctrl K)" title="Search (Ctrl K)"><span class="leading-none translate-y-[3px]"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span><kbd data-slot="kbd" class="pointer-events-none h-[1.15rem] min-w-[1.15rem] select-none items-center justify-center gap-1 rounded border border-border px-1 font-mono text-[0.625rem] font-medium leading-none text-foreground/70 hidden sm:inline-flex transition-colors group-hover:border-accent/40 group-hover:text-accent">Ctrl K</kbd></button><!--astro:end--></astro-island> </div> <h1 class="article-title text-2xl text-foreground mb-3 leading-snug" data-pagefind-meta="title" data-astro-cid-ed2fxd7y>Shipping Terraform Through a Governed Platform: Where the Time Actually Goes</h1>  <span class="sr-only" data-pagefind-meta="kind:post" data-astro-cid-ed2fxd7y></span> <span class="sr-only" data-pagefind-meta="marker:2026-08" data-astro-cid-ed2fxd7y></span> <div class="flex flex-wrap items-center gap-3" data-astro-cid-ed2fxd7y> <time class="font-mono text-xs text-muted tracking-[0.02em]" data-astro-cid-ed2fxd7y>2026-08-03</time>  <span class="text-blueprint/50" data-astro-cid-ed2fxd7y>·</span> <span class="font-mono text-xs text-muted" data-astro-cid-ed2fxd7y>8 min read</span>   <div class="flex flex-wrap gap-1.5" data-astro-cid-ed2fxd7y> <span class="font-mono text-[0.6875rem] lowercase text-muted border border-blueprint/35 px-2 py-0.5" data-pagefind-meta="tag[]" data-astro-cid-ed2fxd7y>AWS</span><span class="font-mono text-[0.6875rem] lowercase text-muted border border-blueprint/35 px-2 py-0.5" data-pagefind-meta="tag[]" data-astro-cid-ed2fxd7y>DevOps</span><span class="font-mono text-[0.6875rem] lowercase text-muted border border-blueprint/35 px-2 py-0.5" data-pagefind-meta="tag[]" data-astro-cid-ed2fxd7y>IaC</span> </div> </div> </div> </header> <main class="max-w-2xl mx-auto px-6 pb-24" data-astro-cid-ed2fxd7y> <div id="article-header-spacer" class="mb-12" data-astro-cid-ed2fxd7y></div> <details class="toc toc--inline" data-pagefind-ignore data-astro-cid-5ebbnest><summary data-astro-cid-5ebbnest><span class="toc-chev" aria-hidden="true" data-astro-cid-5ebbnest></span>
+contents<span class="toc-count" data-astro-cid-5ebbnest> · 10 sections</span></summary><ol data-astro-cid-5ebbnest><li data-astro-cid-5ebbnest><a href="#the-setup" data-astro-cid-5ebbnest>The setup</a></li><li data-astro-cid-5ebbnest><a href="#in-short" data-astro-cid-5ebbnest>In short</a></li><li data-astro-cid-5ebbnest><a href="#process-map" data-astro-cid-5ebbnest>Process map</a></li><li data-astro-cid-5ebbnest><a href="#what-made-the-process-feel-cumbersome" data-astro-cid-5ebbnest>What made the process feel cumbersome</a></li><li data-astro-cid-5ebbnest><a href="#the-pattern-that-kept-repeating" data-astro-cid-5ebbnest>The pattern that kept repeating</a></li><li data-astro-cid-5ebbnest><a href="#the-sop-that-actually-worked" data-astro-cid-5ebbnest>The SOP that actually worked</a></li><li data-astro-cid-5ebbnest><a href="#where-the-time-actually-went" data-astro-cid-5ebbnest>Where the time actually went</a></li><li data-astro-cid-5ebbnest><a href="#what-would-make-it-lighter" data-astro-cid-5ebbnest>What would make it lighter</a></li><li data-astro-cid-5ebbnest><a href="#my-takeaway" data-astro-cid-5ebbnest>My takeaway</a></li><li data-astro-cid-5ebbnest><a href="#one-page-sop-checklist" data-astro-cid-5ebbnest>One-page SOP checklist</a></li></ol></details><nav class="toc-rail" aria-label="On this page" data-pagefind-ignore data-astro-cid-5ebbnest><p class="toc-rail-eyebrow" data-astro-cid-5ebbnest>contents</p><ol class="toc-rail-list" data-astro-cid-5ebbnest><li class="toc-rail-item" data-section="the-setup" data-astro-cid-5ebbnest><a href="#the-setup" data-toc-link="the-setup" data-astro-cid-5ebbnest>The setup</a></li><li class="toc-rail-item" data-section="in-short" data-astro-cid-5ebbnest><a href="#in-short" data-toc-link="in-short" data-astro-cid-5ebbnest>In short</a></li><li class="toc-rail-item" data-section="process-map" data-astro-cid-5ebbnest><a href="#process-map" data-toc-link="process-map" data-astro-cid-5ebbnest>Process map</a></li><li class="toc-rail-item" data-section="what-made-the-process-feel-cumbersome" data-astro-cid-5ebbnest><a href="#what-made-the-process-feel-cumbersome" data-toc-link="what-made-the-process-feel-cumbersome" data-astro-cid-5ebbnest>What made the process feel cumbersome</a><ol class="toc-rail-sub" data-astro-cid-5ebbnest><li data-astro-cid-5ebbnest><a href="#1-validation-bottleneck-in-ci" data-toc-link="1-validation-bottleneck-in-ci" data-astro-cid-5ebbnest>1. Validation bottleneck in CI</a></li><li data-astro-cid-5ebbnest><a href="#2-hidden-complexity-in-module-chains" data-toc-link="2-hidden-complexity-in-module-chains" data-astro-cid-5ebbnest>2. Hidden complexity in module chains</a></li><li data-astro-cid-5ebbnest><a href="#3-permission-asymmetry" data-toc-link="3-permission-asymmetry" data-astro-cid-5ebbnest>3. Permission asymmetry</a></li><li data-astro-cid-5ebbnest><a href="#4-multi-phase-change-sequencing" data-toc-link="4-multi-phase-change-sequencing" data-astro-cid-5ebbnest>4. Multi-phase change sequencing</a></li><li data-astro-cid-5ebbnest><a href="#5-branch-hygiene-and-promotion-friction" data-toc-link="5-branch-hygiene-and-promotion-friction" data-astro-cid-5ebbnest>5. Branch hygiene and promotion friction</a></li></ol></li><li class="toc-rail-item" data-section="the-pattern-that-kept-repeating" data-astro-cid-5ebbnest><a href="#the-pattern-that-kept-repeating" data-toc-link="the-pattern-that-kept-repeating" data-astro-cid-5ebbnest>The pattern that kept repeating</a></li><li class="toc-rail-item" data-section="the-sop-that-actually-worked" data-astro-cid-5ebbnest><a href="#the-sop-that-actually-worked" data-toc-link="the-sop-that-actually-worked" data-astro-cid-5ebbnest>The SOP that actually worked</a><ol class="toc-rail-sub" data-astro-cid-5ebbnest><li data-astro-cid-5ebbnest><a href="#phase-a-access-and-evidence-baseline" data-toc-link="phase-a-access-and-evidence-baseline" data-astro-cid-5ebbnest>Phase A: Access and evidence baseline</a></li><li data-astro-cid-5ebbnest><a href="#phase-b-drift-classification" data-toc-link="phase-b-drift-classification" data-astro-cid-5ebbnest>Phase B: Drift classification</a></li><li data-astro-cid-5ebbnest><a href="#phase-c-root-cause-tracing-through-the-module-chain" data-toc-link="phase-c-root-cause-tracing-through-the-module-chain" data-astro-cid-5ebbnest>Phase C: Root-cause tracing through the module chain</a></li><li data-astro-cid-5ebbnest><a href="#phase-d-controlled-remediation" data-toc-link="phase-d-controlled-remediation" data-astro-cid-5ebbnest>Phase D: Controlled remediation</a></li><li data-astro-cid-5ebbnest><a href="#phase-e-environment-rollout-sequence" data-toc-link="phase-e-environment-rollout-sequence" data-astro-cid-5ebbnest>Phase E: Environment rollout sequence</a></li><li data-astro-cid-5ebbnest><a href="#phase-f-closure" data-toc-link="phase-f-closure" data-astro-cid-5ebbnest>Phase F: Closure</a></li></ol></li><li class="toc-rail-item" data-section="where-the-time-actually-went" data-astro-cid-5ebbnest><a href="#where-the-time-actually-went" data-toc-link="where-the-time-actually-went" data-astro-cid-5ebbnest>Where the time actually went</a></li><li class="toc-rail-item" data-section="what-would-make-it-lighter" data-astro-cid-5ebbnest><a href="#what-would-make-it-lighter" data-toc-link="what-would-make-it-lighter" data-astro-cid-5ebbnest>What would make it lighter</a><ol class="toc-rail-sub" data-astro-cid-5ebbnest><li data-astro-cid-5ebbnest><a href="#1-shift-left-on-validation" data-toc-link="1-shift-left-on-validation" data-astro-cid-5ebbnest>1. Shift-left on validation</a></li><li data-astro-cid-5ebbnest><a href="#2-publish-module-contract-tests" data-toc-link="2-publish-module-contract-tests" data-astro-cid-5ebbnest>2. Publish module contract tests</a></li><li data-astro-cid-5ebbnest><a href="#3-enforce-semantic-plan-guards" data-toc-link="3-enforce-semantic-plan-guards" data-astro-cid-5ebbnest>3. Enforce semantic plan guards</a></li><li data-astro-cid-5ebbnest><a href="#4-standardize-phased-rollout-templates" data-toc-link="4-standardize-phased-rollout-templates" data-astro-cid-5ebbnest>4. Standardize phased rollout templates</a></li><li data-astro-cid-5ebbnest><a href="#5-improve-branch-governance-ergonomics" data-toc-link="5-improve-branch-governance-ergonomics" data-astro-cid-5ebbnest>5. Improve branch governance ergonomics</a></li></ol></li><li class="toc-rail-item" data-section="my-takeaway" data-astro-cid-5ebbnest><a href="#my-takeaway" data-toc-link="my-takeaway" data-astro-cid-5ebbnest>My takeaway</a></li><li class="toc-rail-item" data-section="one-page-sop-checklist" data-astro-cid-5ebbnest><a href="#one-page-sop-checklist" data-toc-link="one-page-sop-checklist" data-astro-cid-5ebbnest>One-page SOP checklist</a></li></ol></nav><script type="module">document.addEventListener("astro:page-load",()=>{const l=document.querySelector(".toc-rail");if(!l)return;const n=[...l.querySelectorAll("[data-toc-link]")].map(r=>{const o=r.getAttribute("data-toc-link"),t=r.closest(".toc-rail-item");return{a:r,id:o,el:o?document.getElementById(o):null,section:t?t.getAttribute("data-section"):o}}).filter(r=>r.el);let u=null,c=!1;const s=()=>{c=!1;const o=(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--article-header-h"))||152)+40;let t=n.length?n[0]:null;for(const e of n)if(e.el&&e.el.getBoundingClientRect().top<=o)t=e;else break;window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-4&&(t=n.length?n[n.length-1]:t);const a=t?t.id:null;if(a===u)return;u=a;const m=t?t.section:null;for(const e of n){const d=e.id===a;e.a.classList.toggle("is-active",d),d?e.a.setAttribute("aria-current","location"):e.a.removeAttribute("aria-current")}l.querySelectorAll(".toc-rail-item").forEach(e=>{e.classList.toggle("is-open",e.getAttribute("data-section")===m)})},i=()=>{c||(c=!0,requestAnimationFrame(s))};s(),requestAnimationFrame(s),window.addEventListener("scroll",i,{passive:!0}),window.addEventListener("resize",i),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("scroll",i),window.removeEventListener("resize",i)},{once:!0})});</script> <article class="prose prose-sm max-w-none" data-pagefind-body data-astro-cid-ed2fxd7y> <span class="sr-only" data-astro-cid-ed2fxd7y>AWS DevOps IaC</span>  <blockquote>
+<p><strong>Context:</strong> This comes from one delivery cycle on the platforms described in <a href="/work/enterprise-app-platform-iac">CASE 03</a>: thin Terraform stacks consuming a shared reference-architecture module, deployed through GitHub Actions to nonprod and prod. It’s written from my seat as the engineer doing the rollout.</p>
+</blockquote>
+<p>I wrote this to document what I actually went through in a real delivery cycle, and why the platform process felt heavy from a Cloud DevOps engineer’s point of view.</p>
+<p>If you’re a technical reader (SRE, platform engineer, cloud engineer or DevOps), this is the practical view: where execution time really went, why delivery slowed down, and which SOP changes would reduce both risk and cycle time.</p>
+<p>A governed platform is supposed to make risky changes slow. The problem is that it makes routine changes slow too.</p>
+<h2 id="the-setup">The setup</h2>
+<ul>
+<li><strong>Stack:</strong> Terraform, GitHub Actions, AWS, versioned internal platform modules</li>
+<li><strong>Environments:</strong> nonprod (deployable from branches) and prod (deployable only from <code>main</code>)</li>
+<li><strong>Source of truth:</strong> plan and apply output in the centralized GitHub Actions runs</li>
+</ul>
+<h2 id="in-short">In short</h2>
+<p>The hardest part was not writing Terraform. The hardest part was navigating platform coupling:</p>
+<ul>
+<li>Deployment truth existed only in centralized GitHub Actions runs.</li>
+<li>Local access was enough for diagnosis, but not enough for full validation.</li>
+<li>A module-level behaviour (RDS gp3 iops handling) caused a deterministic apply failure.</li>
+<li>Branching and promotion constraints increased coordination overhead.</li>
+<li>Listener rule ordering and phased secret wiring needed careful sequencing.</li>
+</ul>
+<p>The rollout succeeded in the end, but only after multiple plan/apply cycles, a deep trace through the module chain, controlled sequencing and cross-team escalation.</p>
+<h2 id="process-map">Process map</h2>
+<figure class="mermaid-fig not-prose"><pre class="mermaid">flowchart TD
+  A["Change request arrives"] --> B["Validate access: AWS, Git, workflow dispatch"]
+  B --> C["Run/inspect nonprod plan · slowed by CI-only validation"]:::pain
+  C --> D{"Risky or surprising drift?"}
+  D -->|Yes| E["Trace module chain and live AWS state · permission asymmetry blocks direct fixes"]:::pain
+  E --> F["Identify deterministic root cause · module default surprises trigger rework"]:::pain
+  F --> G["Implement minimal code fix"]
+  G --> H["Proceed with controlled rollout"]
+  D -->|No| H
+  H --> I["Nonprod phase 1: create infra and placeholders"]
+  I --> J["Nonprod phase 2: wire secrets and routes · listener rule ordering causes plan noise"]:::pain
+  J --> K["Review prod plan on main"]
+  K --> L{"Approval + policy gates pass?"}
+  L -->|No| M["Escalate, annotate risk, rework"]
+  M --> K
+  L -->|Yes| N["Prod phase 1, then phase 2 apply"]
+  N --> O["Post-change verification"]
+  O --> P["Branch cleanup and evidence capture"]
+  P --> Q["Postmortem and SOP improvement updates"]
+
+  classDef pain stroke:#E5A13C,stroke-dasharray:4 3,color:#E5A13C;</pre><figcaption>the rollout path · amber steps are where the friction was</figcaption></figure>
+<h2 id="what-made-the-process-feel-cumbersome">What made the process feel cumbersome</h2>
+<h3 id="1-validation-bottleneck-in-ci">1. Validation bottleneck in CI</h3>
+<p>What happened:</p>
+<ul>
+<li>Nonprod could be tested from branches.</li>
+<li>Prod was gated to <code>main</code>.</li>
+<li>Authoritative plan/apply visibility came only from GitHub Actions logs.</li>
+</ul>
+<p>Why it cost time:</p>
+<ul>
+<li>I couldn’t close feedback loops quickly on my own machine.</li>
+<li>Every critical verification step depended on the pipeline queue, permissions and approvals.</li>
+</ul>
+<h3 id="2-hidden-complexity-in-module-chains">2. Hidden complexity in module chains</h3>
+<p>What happened:</p>
+<ul>
+<li>The consumer repo referenced a shared reference-architecture module.</li>
+<li>That module referenced lower-level platform modules.</li>
+<li>Actual behaviour came from the entire chain, not one file in one repo.</li>
+</ul>
+<p>Why it cost time:</p>
+<ul>
+<li>The root cause (an invalid gp3 iops value coming down the chain) was not obvious.</li>
+<li>Fixing state alone didn’t fix the configuration behaviour.</li>
+<li>I had to trace across repositories and versions to find it.</li>
+</ul>
+<p>The fix itself was small once found: set the value explicitly in the consumer stack instead of relying on the inherited default.</p>
+<h3 id="3-permission-asymmetry">3. Permission asymmetry</h3>
+<p>What happened:</p>
+<ul>
+<li>My engineering role could inspect most resources.</li>
+<li>The deployment role, not my own, is what applies changes, and the two don’t hold the same permissions.</li>
+</ul>
+<p>Why it cost time:</p>
+<ul>
+<li>Diagnosis and remediation were split across identities.</li>
+<li>Even when I knew the fix, applying it still went back through the pipeline.</li>
+</ul>
+<h3 id="4-multi-phase-change-sequencing">4. Multi-phase change sequencing</h3>
+<p>What happened:</p>
+<ul>
+<li>Secrets had to exist before they could be mounted.</li>
+<li>The rollout needed phase 1 (infrastructure) before phase 2 (wiring).</li>
+<li>Listener rules needed order-safe insertion to avoid a collateral diff.</li>
+</ul>
+<p>Why it cost time:</p>
+<ul>
+<li>Straightforward changes became multi-step operational procedures.</li>
+<li>Without strict sequencing, the risk of accidental side effects went up.</li>
+</ul>
+<h3 id="5-branch-hygiene-and-promotion-friction">5. Branch hygiene and promotion friction</h3>
+<p>What happened:</p>
+<ul>
+<li>Long-lived integration branches and short-lived feature branches coexisted.</li>
+<li>Squash merges reduced the branch count but made ahead/behind counts noisy.</li>
+<li>Safe remote cleanup needed deliberate verification.</li>
+</ul>
+<p>Why it cost time:</p>
+<ul>
+<li>Routine Git operations took more thought than they should.</li>
+<li>Time went into proving a branch was safe to delete instead of shipping changes.</li>
+</ul>
+<h2 id="the-pattern-that-kept-repeating">The pattern that kept repeating</h2>
+<p>In practice, the same loop came back on every non-trivial change:</p>
+<ol>
+<li>A plan shows significant drift or surprising changes.</li>
+<li>I investigate whether the drift is real, stale state, or module behaviour.</li>
+<li>I gather evidence from pipeline logs, live AWS and commit history.</li>
+<li>I prepare a minimal-risk code fix.</li>
+<li>Nonprod proves the sequence is safe.</li>
+<li>Prod runs with stricter controls.</li>
+<li>Branches and operational loose ends get cleaned up.</li>
+</ol>
+<p>This loop is reasonable for high-risk systems, but expensive for medium-risk, frequent platform operations.</p>
+<h2 id="the-sop-that-actually-worked">The SOP that actually worked</h2>
+<p>This is what I’d hand to another engineer doing the same kind of rollout under similar platform constraints.</p>
+<h3 id="phase-a-access-and-evidence-baseline">Phase A: Access and evidence baseline</h3>
+<ul>
+<li>Verify AWS identity/profile and the target account.</li>
+<li>Verify repo remote access and authentication.</li>
+<li>Verify workflow dispatch permissions.</li>
+<li>Record baseline run links and key environment assumptions.</li>
+</ul>
+<p><strong>Success criteria:</strong> you can read the infra, trigger workflows, and match logs to code.</p>
+<h3 id="phase-b-drift-classification">Phase B: Drift classification</h3>
+<ul>
+<li>Split findings into:
+<ul>
+<li>Functional risk</li>
+<li>Configuration drift</li>
+<li>Cleanup/noise drift</li>
+</ul>
+</li>
+<li>Confirm the live resource before deciding what to do.</li>
+</ul>
+<p><strong>Success criteria:</strong> every planned change is labelled intentional, suspicious or cleanup.</p>
+<h3 id="phase-c-root-cause-tracing-through-the-module-chain">Phase C: Root-cause tracing through the module chain</h3>
+<ul>
+<li>Trace from the consumer repo input to the final provider resource argument.</li>
+<li>Find where defaults or commented-out wiring change the behaviour.</li>
+<li>Check whether state edits alone can resolve the issue or not.</li>
+</ul>
+<p><strong>Success criteria:</strong> one deterministic root cause with a reproducible explanation.</p>
+<h3 id="phase-d-controlled-remediation">Phase D: Controlled remediation</h3>
+<ul>
+<li>Apply the smallest safe code change first.</li>
+<li>If needed, pin to a known-good module ref.</li>
+<li>Set explicit values for critical parameters instead of relying on implicit defaults.</li>
+<li>Keep commits focused and auditable.</li>
+</ul>
+<p><strong>Success criteria:</strong> the plan delta is understandable and targeted.</p>
+<h3 id="phase-e-environment-rollout-sequence">Phase E: Environment rollout sequence</h3>
+<ul>
+<li>Nonprod phase 1: resource creation and placeholder-safe wiring.</li>
+<li>Nonprod phase 2: activate secret mounts and path rules.</li>
+<li>Prod phase 1, then phase 2, with the same pattern.</li>
+<li>Avoid list-index insertion side effects by appending in an order-safe way.</li>
+</ul>
+<p><strong>Success criteria:</strong> no hidden destructive change, and services stay healthy.</p>
+<h3 id="phase-f-closure">Phase F: Closure</h3>
+<ul>
+<li>Clean up merged remote branches only after verification.</li>
+<li>Preserve evidence: run IDs, plan summaries, rationale notes.</li>
+<li>Publish a postmortem with SOP improvements.</li>
+</ul>
+<p><strong>Success criteria:</strong> handoff is complete, and future work starts from better documentation.</p>
+<h2 id="where-the-time-actually-went">Where the time actually went</h2>
+<p>In this kind of platform model, engineering time tends to go here:</p>
+<ul>
+<li>Gathering evidence and proving intent in plan diffs.</li>
+<li>Coordinating approvals and gated prod workflows.</li>
+<li>Investigating module behaviour across repos.</li>
+<li>Sequencing low-level infrastructure changes to avoid side effects.</li>
+<li>Re-validating the same assumptions across environments.</li>
+</ul>
+<p>That’s why the process felt cumbersome: the delivery work is often smaller than the verification and orchestration work around it.</p>
+<h2 id="what-would-make-it-lighter">What would make it lighter</h2>
+<p>These are the changes I’d ask a platform team for. Each one removes a step from the loop above without removing a control.</p>
+<h3 id="1-shift-left-on-validation">1. Shift-left on validation</h3>
+<ul>
+<li>Provide a supported preflight command that mirrors prod plan logic as closely as possible.</li>
+<li>Fail early on known-invalid combinations (for example, gp3 with <code>iops = 0</code>).</li>
+</ul>
+<h3 id="2-publish-module-contract-tests">2. Publish module contract tests</h3>
+<ul>
+<li>For each platform module release, publish expected behaviour snapshots.</li>
+<li>Detect changes to defaults for critical parameters.</li>
+</ul>
+<h3 id="3-enforce-semantic-plan-guards">3. Enforce semantic plan guards</h3>
+<ul>
+<li>Add policy checks for high-risk diffs (RDS storage/iops, task definition reversions, listener reindexing).</li>
+<li>Require an explicit note to approve an exceptional drift.</li>
+</ul>
+<h3 id="4-standardize-phased-rollout-templates">4. Standardize phased rollout templates</h3>
+<ul>
+<li>First-class templates for two-phase secret activation.</li>
+<li>Order-safe helpers for listener path rules.</li>
+</ul>
+<h3 id="5-improve-branch-governance-ergonomics">5. Improve branch governance ergonomics</h3>
+<ul>
+<li>A periodic automatic report of merged-but-not-deleted branches.</li>
+<li>Clear branch lineage notes for squash-merge workflows.</li>
+</ul>
+<h2 id="my-takeaway">My takeaway</h2>
+<p>The platform was not impossible. It was operable, but operationally heavy.</p>
+<p>The difference between a smooth rollout and a delayed one wasn’t technical skill alone. In this case it came down to:</p>
+<ul>
+<li>quality of evidence,</li>
+<li>strict execution sequence,</li>
+<li>understanding hidden module behaviour,</li>
+<li>and sticking to the SOP under constraints.</li>
+</ul>
+<p>If platform teams reduce validation friction and make module behaviour more transparent, engineers can spend more time delivering and less time proving.</p>
+<h2 id="one-page-sop-checklist">One-page SOP checklist</h2>
+<p>Use this before any medium- or high-impact Terraform rollout:</p>
+<ul class="contains-task-list">
+<li class="task-list-item"><input type="checkbox" disabled> Access check complete (AWS, repo, workflow dispatch)</li>
+<li class="task-list-item"><input type="checkbox" disabled> Drift classified (intentional vs suspicious vs cleanup)</li>
+<li class="task-list-item"><input type="checkbox" disabled> Module chain traced for critical parameters</li>
+<li class="task-list-item"><input type="checkbox" disabled> Nonprod phase 1 and phase 2 validated</li>
+<li class="task-list-item"><input type="checkbox" disabled> Prod plan reviewed with risk annotations</li>
+<li class="task-list-item"><input type="checkbox" disabled> Apply executed with run evidence captured</li>
+<li class="task-list-item"><input type="checkbox" disabled> Branch cleanup completed for merged feature branches</li>
+<li class="task-list-item"><input type="checkbox" disabled> Post-change notes published</li>
+</ul>  </article>  </main> <footer class="border-t border-border"> <div class="max-w-2xl mx-auto px-6 py-10"> <!-- Title block grid --> <div class="grid grid-cols-2 sm:grid-cols-3 gap-px bg-border border border-border font-mono"> <!-- SITE --> <div class="p-4 bg-background"> <div class="text-[10px] tracking-[0.15em] text-muted uppercase">site</div> <div class="text-xs text-foreground mt-1 break-words">irfanadziri.dev</div> </div> <!-- ROLE --> <div class="p-4 bg-background"> <div class="text-[10px] tracking-[0.15em] text-muted uppercase">role</div> <div class="text-xs text-foreground mt-1 break-words">cloud devops & platform engineering · saas</div> </div> <!-- LOCATION --> <div class="p-4 bg-background"> <div class="text-[10px] tracking-[0.15em] text-muted uppercase">location</div> <div class="text-xs text-foreground mt-1 break-words">malaysia</div> </div> <!-- CONTACT --> <div class="p-4 bg-background"> <div class="text-[10px] tracking-[0.15em] text-muted uppercase">contact</div> <a href="mailto:works@irfanadziri.dev" class="text-xs text-foreground hover:text-accent transition-colors mt-1 block break-words">works@irfanadziri.dev</a> </div> <!-- LINKS --> <div class="p-4 bg-background"> <div class="text-[10px] tracking-[0.15em] text-muted uppercase">links</div> <div class="text-xs text-foreground mt-1"> <a href="https://github.com/irfanadziri" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors">github</a> <span class="text-muted"> · </span> <a href="https://linkedin.com/in/irfanadziri" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors">linkedin</a> </div> </div> <!-- AVAILABILITY --> <div class="p-4 bg-background"> <div class="text-[10px] tracking-[0.15em] text-muted uppercase">availability</div> <div class="text-xs text-foreground mt-1 break-words"> <span class="status-dot mr-1.5 align-[0.15em]" aria-hidden="true"></span>open to roles &amp; freelance
+</div> </div> </div> <!-- Metadata row below --> <div class="flex items-center justify-between mt-6 font-mono text-[10px] tracking-[0.15em] uppercase text-muted"> <span>© 2026 irfanadziri</span> <span>latest post 2026-08-03</span> </div> </div> </footer>  <script type="module" src="/_astro/base.astro_astro_type_script_index_0_lang.BCsDuxZr.js"></script> </body></html>  <script type="module">document.addEventListener("astro:page-load",()=>{const e=document.getElementById("article-header"),n=document.getElementById("article-header-spacer");if(e&&n){const t=()=>{n.style.height=e.offsetHeight+"px",document.documentElement.style.setProperty("--article-header-h",e.offsetHeight+"px")};t(),window.addEventListener("resize",t),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("resize",t)},{once:!0})}});</script>
