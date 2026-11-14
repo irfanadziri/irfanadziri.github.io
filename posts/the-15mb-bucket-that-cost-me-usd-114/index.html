@@ -1,0 +1,218 @@
+<!DOCTYPE html><html lang="en" data-grid="quarter" data-astro-transition-scope="astro-jklelgxw-1"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><meta name="description" content="Two tiny Litestream replicas ran up 928 GB of S3 data transfer in two weeks. How it happened, why no alert stopped it, how AWS waived the bill, and what I changed about building with AI."><link rel="canonical" href="https://irfanadziri.dev/posts/the-15mb-bucket-that-cost-me-usd-114/"><meta property="og:type" content="website"><meta property="og:site_name" content="irfanadziri"><meta property="og:title" content="The 15 MB Bucket That Cost Me USD 114: Litestream, S3 LIST Calls and Vibe-Coded Defaults · irfanadziri"><meta property="og:description" content="Two tiny Litestream replicas ran up 928 GB of S3 data transfer in two weeks. How it happened, why no alert stopped it, how AWS waived the bill, and what I changed about building with AI."><meta property="og:url" content="https://irfanadziri.dev/posts/the-15mb-bucket-that-cost-me-usd-114/"><meta property="og:image" content="https://irfanadziri.dev/og/posts/the-15mb-bucket-that-cost-me-usd-114.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="The 15 MB Bucket That Cost Me USD 114: Litestream, S3 LIST Calls and Vibe-Coded Defaults · irfanadziri"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="The 15 MB Bucket That Cost Me USD 114: Litestream, S3 LIST Calls and Vibe-Coded Defaults · irfanadziri"><meta name="twitter:description" content="Two tiny Litestream replicas ran up 928 GB of S3 data transfer in two weeks. How it happened, why no alert stopped it, how AWS waived the bill, and what I changed about building with AI."><meta name="twitter:image" content="https://irfanadziri.dev/og/posts/the-15mb-bucket-that-cost-me-usd-114.png"><meta name="theme-color" content="#0D131D"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><title>The 15 MB Bucket That Cost Me USD 114: Litestream, S3 LIST Calls and Vibe-Coded Defaults · irfanadziri</title><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.C-Cw1uW6.js"></script><script async src="https://www.googletagmanager.com/gtag/js?id=G-V5N6BFQPX5"></script><script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-V5N6BFQPX5', { send_page_view: false });
+    </script><link rel="stylesheet" href="/_astro/_slug_.CCmwyVuk.css">
+<link rel="stylesheet" href="/_astro/_slug_.B6Rx3xe5.css">
+<style>.article-title[data-astro-cid-ed2fxd7y]{font-family:var(--font-display);font-variation-settings:"wght" 800;letter-spacing:-.01em}.filed-link[data-astro-cid-ed2fxd7y]{color:#5b8dd9e6;border-bottom:1px solid rgba(91,141,217,.35);transition:color .15s,border-color .15s}.filed-link[data-astro-cid-ed2fxd7y]:hover{color:var(--color-signal);border-bottom-color:var(--color-signal)}
+</style><script type="module" src="/_astro/page.Ca9VeHmW.js"></script><style>[data-astro-transition-scope="astro-jklelgxw-1"] { view-transition-name: astro-jklelgxw-1; }@layer astro { ::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(astro-jklelgxw-1) { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-jklelgxw-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-jklelgxw-1"] { 
+	animation-duration: 0.2s;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body> <canvas id="grid-bg" data-astro-transition-persist="grid-bg" aria-hidden="true"></canvas>  <script type="module">const r=document.getElementById("grid-bg");if(r){let u=function(){const o=document.documentElement.dataset.grid??"quarter";return o==="hero"?1-Math.min(window.scrollY/Math.max(window.innerHeight,1),1)*.75:C[o]??.25},x=function(o){e.strokeStyle=h(L,o),e.lineWidth=1,e.beginPath();for(let n=0;n<=g;n++)e.moveTo(n*a+.5,0),e.lineTo(n*a+.5,s);for(let n=0;n<=y;n++)e.moveTo(0,n*a+.5),e.lineTo(i,n*a+.5);e.stroke()},q=function(){const o=Math.random()<.5,n=o?g:y,t=(Math.random()*n|0)*a+.5,c=Math.random()<.5?1:-1;return{vertical:o,lane:t,dir:c,pos:c===1?-m:(o?s:i)+m,speed:(110+Math.random()*130)*c,color:Math.random()<.15?R:L}},B=function(o,n){for(e.setTransform(l,0,0,l,0,0),e.clearRect(0,0,i,s),x(.1),o>k&&(k=o+.2+Math.random()*.4,E.push({c:Math.random()*g|0,r:Math.random()*y|0,life:0,max:2.2+Math.random()*1.8,color:Math.random()<.12?R:L})),E=E.filter(t=>{t.life+=n;const c=t.life/t.max;return c>=1?!1:(e.fillStyle=h(t.color,Math.sin(c*Math.PI)*.13),e.fillRect(t.c*a+1,t.r*a+1,a-1,a-1),!0)});f.length<4&&Math.random()<.025;)f.push(q());f=f.filter(t=>{t.pos+=t.speed*n;const c=t.vertical?s:i;if(t.dir===1?t.pos-m>c:t.pos+m<0)return!1;const p=t.pos-m*t.dir,S=t.vertical?e.createLinearGradient(0,p,0,t.pos):e.createLinearGradient(p,0,t.pos,0);S.addColorStop(0,h(t.color,0)),S.addColorStop(1,h(t.color,.75)),e.strokeStyle=S,e.lineWidth=1.5,e.beginPath(),t.vertical?(e.moveTo(t.lane,p),e.lineTo(t.lane,t.pos)):(e.moveTo(p,t.lane),e.lineTo(t.pos,t.lane)),e.stroke(),e.fillStyle=h(t.color,.9);const I=t.vertical?t.lane:t.pos,W=t.vertical?t.pos:t.lane;return e.beginPath(),e.arc(I,W,1.7,0,Math.PI*2),e.fill(),!0})},A=function(o){const n=Math.min((o-T)/1e3,.05);T=o,B(o/1e3,n),d+=(u()-d)*Math.min(1,n*6),r.style.opacity=d.toFixed(3),v=requestAnimationFrame(A)},M=function(){if(cancelAnimationFrame(v),w.matches){e.setTransform(l,0,0,l,0,0),e.clearRect(0,0,i,s),x(.1),r.style.opacity=String(u());return}T=performance.now(),v=requestAnimationFrame(A)},P=function(){w.matches&&(d=u(),r.style.opacity=String(d))},F=function(){const o=r.clientWidth,n=r.clientHeight;o===i&&n===s||(i=o,s=n,r.width=i*l,r.height=s*l,g=Math.ceil(i/a),y=Math.ceil(s/a),f=[],w.matches&&M())};const e=r.getContext("2d"),l=Math.min(window.devicePixelRatio||1,2),a=48,m=140,L=[91,141,217],R=[229,161,60],h=(o,n)=>`rgba(${o[0]},${o[1]},${o[2]},${n})`;let i=0,s=0,g=0,y=0,E=[],f=[],k=0,v=0,T=0;const w=matchMedia("(prefers-reduced-motion: reduce)"),C={hero:1,half:.5,quarter:.25};let d=u();r.style.opacity=String(d),window.addEventListener("scroll",P,{passive:!0}),document.addEventListener("astro:page-load",P),window.addEventListener("resize",F),document.addEventListener("visibilitychange",()=>{document.hidden?cancelAnimationFrame(v):M()}),w.addEventListener("change",M),F(),M()}</script>  <header id="article-header" class="fixed top-0 z-10 bg-background/60 backdrop-blur-sm border-b border-border" style="left:0;right:0;padding-top:env(safe-area-inset-top)" data-astro-cid-ed2fxd7y> <div class="max-w-2xl mx-auto px-6 pt-8 pb-5" data-astro-cid-ed2fxd7y> <div class="flex items-center justify-between gap-4 mb-4" data-astro-cid-ed2fxd7y> <a href="/posts" class="inline-flex items-center gap-1.5 font-mono text-[0.8125rem] text-muted hover:text-accent transition-colors" data-astro-cid-ed2fxd7y> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" data-astro-cid-ed2fxd7y> <path d="M19 12H5M12 5l-7 7 7 7" data-astro-cid-ed2fxd7y></path> </svg>
+posts
+</a> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var l=(n,t)=>{let i=async()=>{await(await n())()},e=typeof t.value=="object"?t.value:void 0,s={timeout:e==null?void 0:e.timeout};"requestIdleCallback"in window?window.requestIdleCallback(i,s):setTimeout(i,s.timeout||200)};(self.Astro||(self.Astro={})).idle=l;window.dispatchEvent(new Event("astro:idle"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="ZIpBsY" prefix="r1" component-url="/_astro/Search.71JpKRkS.js" component-export="default" renderer-url="/_astro/client.DuciY4M5.js" props="{&quot;variant&quot;:[0,&quot;nav&quot;],&quot;data-astro-cid-ed2fxd7y&quot;:[0,true]}" ssr client="idle" opts="{&quot;name&quot;:&quot;Search&quot;,&quot;value&quot;:true}" await-children><button class="group inline-flex items-baseline gap-1.5 text-muted hover:text-accent transition-colors" aria-label="Search (Ctrl K)" title="Search (Ctrl K)"><span class="leading-none translate-y-[3px]"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></span><kbd data-slot="kbd" class="pointer-events-none h-[1.15rem] min-w-[1.15rem] select-none items-center justify-center gap-1 rounded border border-border px-1 font-mono text-[0.625rem] font-medium leading-none text-foreground/70 hidden sm:inline-flex transition-colors group-hover:border-accent/40 group-hover:text-accent">Ctrl K</kbd></button><!--astro:end--></astro-island> </div> <h1 class="article-title text-2xl text-foreground mb-3 leading-snug" data-pagefind-meta="title" data-astro-cid-ed2fxd7y>The 15 MB Bucket That Cost Me USD 114: Litestream, S3 LIST Calls and Vibe-Coded Defaults</h1>  <span class="sr-only" data-pagefind-meta="kind:post" data-astro-cid-ed2fxd7y></span> <span class="sr-only" data-pagefind-meta="marker:2026-11" data-astro-cid-ed2fxd7y></span> <div class="flex flex-wrap items-center gap-3" data-astro-cid-ed2fxd7y> <time class="font-mono text-xs text-muted tracking-[0.02em]" data-astro-cid-ed2fxd7y>2026-11-14</time>  <span class="text-blueprint/50" data-astro-cid-ed2fxd7y>·</span> <span class="font-mono text-xs text-muted" data-astro-cid-ed2fxd7y>10 min read</span>   <div class="flex flex-wrap gap-1.5" data-astro-cid-ed2fxd7y> <span class="font-mono text-[0.6875rem] lowercase text-muted border border-blueprint/35 px-2 py-0.5" data-pagefind-meta="tag[]" data-astro-cid-ed2fxd7y>AWS</span><span class="font-mono text-[0.6875rem] lowercase text-muted border border-blueprint/35 px-2 py-0.5" data-pagefind-meta="tag[]" data-astro-cid-ed2fxd7y>S3</span><span class="font-mono text-[0.6875rem] lowercase text-muted border border-blueprint/35 px-2 py-0.5" data-pagefind-meta="tag[]" data-astro-cid-ed2fxd7y>Cost</span><span class="font-mono text-[0.6875rem] lowercase text-muted border border-blueprint/35 px-2 py-0.5" data-pagefind-meta="tag[]" data-astro-cid-ed2fxd7y>Homelab</span><span class="font-mono text-[0.6875rem] lowercase text-muted border border-blueprint/35 px-2 py-0.5" data-pagefind-meta="tag[]" data-astro-cid-ed2fxd7y>AI</span> </div> </div> </div> </header> <main class="max-w-2xl mx-auto px-6 pb-24" data-astro-cid-ed2fxd7y> <div id="article-header-spacer" class="mb-12" data-astro-cid-ed2fxd7y></div> <details class="toc toc--inline" data-pagefind-ignore data-astro-cid-5ebbnest><summary data-astro-cid-5ebbnest><span class="toc-chev" aria-hidden="true" data-astro-cid-5ebbnest></span>
+contents<span class="toc-count" data-astro-cid-5ebbnest> · 8 sections</span></summary><ol data-astro-cid-5ebbnest><li data-astro-cid-5ebbnest><a href="#1-the-setup" data-astro-cid-5ebbnest>1. The Setup</a></li><li data-astro-cid-5ebbnest><a href="#2-how-a-15-mb-bucket-becomes-126-gb-a-day" data-astro-cid-5ebbnest>2. How a 15 MB Bucket Becomes 126 GB a Day</a></li><li data-astro-cid-5ebbnest><a href="#3-the-numbers" data-astro-cid-5ebbnest>3. The Numbers</a></li><li data-astro-cid-5ebbnest><a href="#4-why-nothing-stopped-it" data-astro-cid-5ebbnest>4. Why Nothing Stopped It</a></li><li data-astro-cid-5ebbnest><a href="#5-the-fix" data-astro-cid-5ebbnest>5. The Fix</a></li><li data-astro-cid-5ebbnest><a href="#6-getting-the-bill-waived" data-astro-cid-5ebbnest>6. Getting the Bill Waived</a></li><li data-astro-cid-5ebbnest><a href="#7-what-i-changed-about-building-with-ai" data-astro-cid-5ebbnest>7. What I Changed About Building With AI</a></li><li data-astro-cid-5ebbnest><a href="#closing-thoughts" data-astro-cid-5ebbnest>Closing Thoughts</a></li></ol></details><nav class="toc-rail" aria-label="On this page" data-pagefind-ignore data-astro-cid-5ebbnest><p class="toc-rail-eyebrow" data-astro-cid-5ebbnest>contents</p><ol class="toc-rail-list" data-astro-cid-5ebbnest><li class="toc-rail-item" data-section="1-the-setup" data-astro-cid-5ebbnest><a href="#1-the-setup" data-toc-link="1-the-setup" data-astro-cid-5ebbnest>1. The Setup</a></li><li class="toc-rail-item" data-section="2-how-a-15-mb-bucket-becomes-126-gb-a-day" data-astro-cid-5ebbnest><a href="#2-how-a-15-mb-bucket-becomes-126-gb-a-day" data-toc-link="2-how-a-15-mb-bucket-becomes-126-gb-a-day" data-astro-cid-5ebbnest>2. How a 15 MB Bucket Becomes 126 GB a Day</a></li><li class="toc-rail-item" data-section="3-the-numbers" data-astro-cid-5ebbnest><a href="#3-the-numbers" data-toc-link="3-the-numbers" data-astro-cid-5ebbnest>3. The Numbers</a></li><li class="toc-rail-item" data-section="4-why-nothing-stopped-it" data-astro-cid-5ebbnest><a href="#4-why-nothing-stopped-it" data-toc-link="4-why-nothing-stopped-it" data-astro-cid-5ebbnest>4. Why Nothing Stopped It</a></li><li class="toc-rail-item" data-section="5-the-fix" data-astro-cid-5ebbnest><a href="#5-the-fix" data-toc-link="5-the-fix" data-astro-cid-5ebbnest>5. The Fix</a></li><li class="toc-rail-item" data-section="6-getting-the-bill-waived" data-astro-cid-5ebbnest><a href="#6-getting-the-bill-waived" data-toc-link="6-getting-the-bill-waived" data-astro-cid-5ebbnest>6. Getting the Bill Waived</a></li><li class="toc-rail-item" data-section="7-what-i-changed-about-building-with-ai" data-astro-cid-5ebbnest><a href="#7-what-i-changed-about-building-with-ai" data-toc-link="7-what-i-changed-about-building-with-ai" data-astro-cid-5ebbnest>7. What I Changed About Building With AI</a></li><li class="toc-rail-item" data-section="closing-thoughts" data-astro-cid-5ebbnest><a href="#closing-thoughts" data-toc-link="closing-thoughts" data-astro-cid-5ebbnest>Closing Thoughts</a><ol class="toc-rail-sub" data-astro-cid-5ebbnest><li data-astro-cid-5ebbnest><a href="#further-reading" data-toc-link="further-reading" data-astro-cid-5ebbnest>Further Reading</a></li></ol></li></ol></nav><script type="module">document.addEventListener("astro:page-load",()=>{const l=document.querySelector(".toc-rail");if(!l)return;const n=[...l.querySelectorAll("[data-toc-link]")].map(r=>{const o=r.getAttribute("data-toc-link"),t=r.closest(".toc-rail-item");return{a:r,id:o,el:o?document.getElementById(o):null,section:t?t.getAttribute("data-section"):o}}).filter(r=>r.el);let u=null,c=!1;const s=()=>{c=!1;const o=(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--article-header-h"))||152)+40;let t=n.length?n[0]:null;for(const e of n)if(e.el&&e.el.getBoundingClientRect().top<=o)t=e;else break;window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-4&&(t=n.length?n[n.length-1]:t);const a=t?t.id:null;if(a===u)return;u=a;const m=t?t.section:null;for(const e of n){const d=e.id===a;e.a.classList.toggle("is-active",d),d?e.a.setAttribute("aria-current","location"):e.a.removeAttribute("aria-current")}l.querySelectorAll(".toc-rail-item").forEach(e=>{e.classList.toggle("is-open",e.getAttribute("data-section")===m)})},i=()=>{c||(c=!0,requestAnimationFrame(s))};s(),requestAnimationFrame(s),window.addEventListener("scroll",i,{passive:!0}),window.addEventListener("resize",i),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("scroll",i),window.removeEventListener("resize",i)},{once:!0})});</script> <article class="prose prose-sm max-w-none" data-pagefind-body data-astro-cid-ed2fxd7y> <span class="sr-only" data-astro-cid-ed2fxd7y>AWS S3 Cost Homelab AI</span>  <p>Two of my homelab apps each backed up a SQLite database of a few megabytes to S3 with <a href="https://litestream.io" target="_blank" rel="noopener noreferrer">Litestream</a>. In October that cost me USD 105.04 in S3 charges, plus tax, for buckets that held about 15 MB each. Storage came to USD 0.02. The rest was data transfer and API requests that I never pictured when I set it up, because I never read the docs on what Litestream does in the background. An AI assistant wrote the config, it worked, and I moved on.</p>
+<p>This is the write-up: how a tiny bucket generates hundreds of gigabytes of traffic, why none of my alerts stopped it, how I got the bill waived, and what I now do differently when I build with AI.</p>
+<hr>
+<h2 id="1-the-setup">1. The Setup</h2>
+<p>Both apps follow the same pattern: a single Bun process, SQLite in WAL mode, running in an LXC container on Proxmox at home. Litestream replicates the database to an S3 bucket in <code>ap-southeast-5</code>, so a dead disk costs seconds of data, not a day.</p>
+<p>The architecture decision record for the first app said it plainly:</p>
+<blockquote>
+<p>Two users, a few hundred writes a day at most. Litestream gives point-in-time recovery for pennies.</p>
+</blockquote>
+<p>That line was true for storage. It was not true for anything else.</p>
+<p>The config that shipped:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">dbs</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">path</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">/opt/app/data/app.db</span></span>
+<span class="line"><span style="color:#85E89D">    replica</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">      url</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">s3://app-backup/litestream</span></span>
+<span class="line"><span style="color:#85E89D">      region</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">ap-southeast-5</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">snapshot</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  interval</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">24h</span></span>
+<span class="line"><span style="color:#85E89D">  retention</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">720h</span><span style="color:#6A737D">   # 30 days of point-in-time restore</span></span></code></pre>
+<p>It looks reasonable. A daily snapshot, kept for a month. What it doesn’t show is what Litestream does between snapshots, because that part comes from defaults.</p>
+<h2 id="2-how-a-15-mb-bucket-becomes-126-gb-a-day">2. How a 15 MB Bucket Becomes 126 GB a Day</h2>
+<p>Litestream 0.5 doesn’t just upload changes. It writes small files and then compacts them through levels, and it lists the bucket to do that.</p>
+<figure class="mermaid-fig not-prose"><pre class="mermaid">flowchart TD
+  A["App writes to SQLite"] --> B["Litestream uploads changes as small L0 files, within about a second"]
+  B --> C["Every 30s (default): compact recent L0 files into one L1 file"]:::pain
+  C --> D["To compact, LIST the files at that level"]:::pain
+  D --> E["New L1 file kept until it falls outside snapshot retention: 30 days"]:::pain
+  E --> F["More L1 files each day, so every LIST returns more pages"]:::pain
+  F --> D
+  D --> G["Each 1,000-key page of LIST response is a few hundred KB, billed as data transfer out"]:::pain
+
+  classDef pain stroke:#E5A13C,stroke-dasharray:4 3,color:#E5A13C;</pre><figcaption>what the config didn't show · amber is where the cost came from</figcaption></figure>
+<p>The pieces, in order:</p>
+<ul>
+<li><strong>Compaction every 30 seconds</strong> is Litestream’s default for level 1. That is 2,880 runs a day per database, each one listing files.</li>
+<li><strong>L1 files outlive their usefulness.</strong> Old L1 files are only deleted once the daily snapshot they precede falls outside snapshot retention. With <code>retention: 720h</code>, a 30-second file survives for 30 days.</li>
+<li><strong>The pile grows every day.</strong> By the end of October one bucket held 36,000 current objects and the other 27,000. Each 30-second compaction paged through all of them.</li>
+<li><strong>LIST responses count as data transfer out.</strong> A page of 1,000 keys is a few hundred KB of XML. My traffic averaged about 440,000 LIST calls a day at around 286 KB each: about 126 GB a day, from buckets holding 15 MB.</li>
+</ul>
+<p>None of this is a Litestream bug. The defaults are sensible for a database that wants fine-grained point-in-time recovery over a short window. Combined with a 30-day retention I set without thinking about file counts, they produced a cost curve that grew every day.</p>
+<h2 id="3-the-numbers">3. The Numbers</h2>
+<div class="scroll-x table-wrap">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Dimension</th><th>Value</th></tr></thead><tbody><tr><td><strong>Bucket size</strong></td><td>About 15 MB each</td></tr><tr><td><strong>October data transfer out</strong></td><td>928 GB, of which 828 GB billable after the 100 GB free allowance (USD 89.46)</td></tr><tr><td><strong>October Tier 1 requests</strong></td><td>3.45 million, mostly LIST (USD 15.51)</td></tr><tr><td><strong>October Tier 2 requests</strong></td><td>127,000 (USD 0.05)</td></tr><tr><td><strong>October storage</strong></td><td>USD 0.02</td></tr><tr><td><strong>October S3 total</strong></td><td>USD 105.04, plus USD 8.41 tax</td></tr><tr><td><strong>Peak daily cost</strong></td><td>About USD 15 and still climbing</td></tr><tr><td><strong>Projected monthly cost</strong></td><td>USD 750–1,000 once both buckets reached 30 days of files</td></tr></tbody></table></div>
+<p>The data transfer charge didn’t start until 23 October. The first week used up the free 100 GB, which hid the problem for exactly as long as it would have been cheap to fix.</p>
+<figure class="mermaid-fig not-prose"><pre class="mermaid">timeline TD
+  17 Oct : First app's bucket created
+  19 Oct : My only budget alert fires at USD 0.79 of USD 1.00
+  21 Oct : Second app's bucket created
+  23 Oct : Free 100 GB data transfer used up, charges start
+  31 Oct : About USD 15 a day and rising
+  1 Nov  : Found while estimating backup costs; compaction slowed, then Litestream removed
+  13 Nov : AWS waives the October invoice</pre><figcaption>October 2026 · two weeks from first bucket to a USD 15-a-day bill</figcaption></figure>
+<h2 id="4-why-nothing-stopped-it">4. Why Nothing Stopped It</h2>
+<p>I had two safety nets. Both worked exactly as configured, and neither helped.</p>
+<ul>
+<li><strong>AWS Budgets</strong> had one alert, at 75% of USD 1. It fired on 19 October at USD 0.79, a figure that looked like any normal month. An actual-spend alert fires once per period, so as the bill climbed to USD 114 it stayed silent.</li>
+<li><strong>AWS Cost Anomaly Detection</strong> recorded the S3 anomaly at the start, with an impact of USD 6.50. AWS dates it from 16 October, a day before my first bucket existed, which I put down to its daily windows rather than anything I ran. The default subscription only emails when impact reaches <strong>USD 100 and 40%</strong>, so I never heard about it.</li>
+</ul>
+<p>The lesson isn’t “turn on alerts”. I had alerts. It’s that one low threshold is a single shot, and the default anomaly threshold is set for accounts far larger than a homelab.</p>
+<p>What I run now:</p>
+<div class="scroll-x table-wrap">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Alert</th><th>Setting</th></tr></thead><tbody><tr><td><strong>Budget, actual spend</strong></td><td>Email at USD 5, 20 and 50</td></tr><tr><td><strong>Budget, forecast</strong></td><td>Email at USD 20</td></tr><tr><td><strong>Cost Anomaly Detection</strong></td><td>My own subscription, daily, at USD 5 of impact</td></tr><tr><td><strong>Daily cost report</strong></td><td>Yesterday’s spend by service and the month to date, on my phone at 9 AM, flagged above USD 1 a day or USD 5 a month</td></tr></tbody></table></div>
+<p>Either the USD 5 anomaly alert or the daily report would have caught this around 17 October, for a few dollars.</p>
+<h2 id="5-the-fix">5. The Fix</h2>
+<p>The immediate fix was a small config change. Compacting every 5 minutes instead of 30 seconds cuts LIST calls about tenfold, and 7-day retention lets old files age out:</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">levels</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">interval</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">5m</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">interval</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">1h</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">interval</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">6h</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">snapshot</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  interval</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">24h</span></span>
+<span class="line"><span style="color:#85E89D">  retention</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">168h</span></span></code></pre>
+<p>I kept three levels, the same count as the defaults. Retention cleans up level by level, and the docs don’t say what happens to files left at a level you remove, so I didn’t find out.</p>
+<p>Then I asked the question I should have asked at the start: what is this backup for? Both apps run on Proxmox, and Proxmox Backup Server already snapshots every container nightly to S3. For apps with one or two users, losing at most a day is acceptable. So I removed Litestream entirely, emptied and deleted both buckets with all their versions (235,441 objects), and deleted the IAM users through Terraform. S3 spend dropped to about zero the next day.</p>
+<h2 id="6-getting-the-bill-waived">6. Getting the Bill Waived</h2>
+<p>I opened a billing case in the AWS console, which is free on the Basic support plan. The first reply was automated. A human replied five days later, after a follow-up asking for manual review.</p>
+<p>What the billing agent asked for, in order:</p>
+<ul>
+<li><strong>Why the invoice was unpaid.</strong> The payment method on file had lapsed, and I told them the invoice would stay unpaid while the request was under review.</li>
+<li><strong>What I had put in place,</strong> with the exact budget amounts and thresholds. They checked the budget existed in my account before moving on.</li>
+<li><strong>Confirmation that I’m liable for future usage</strong> under the AWS Customer Agreement.</li>
+<li><strong>Which October usage was intended,</strong> so they could separate it from the unintended part.</li>
+</ul>
+<p>On 13 November AWS waived the whole October invoice: USD 114.43, which covered the S3 charges and their tax plus about USD 1 of other usage. What I think helped: I owned the mistake, I didn’t dispute AWS’s metering, I explained the mechanism with numbers, the resources were already gone, and the alerts existed before I said they did. When one of my drafts read like I was blaming AWS’s default anomaly threshold, I rewrote it as my own setting to fix.</p>
+<h2 id="7-what-i-changed-about-building-with-ai">7. What I Changed About Building With AI</h2>
+<p>The honest root cause is not Litestream or S3. I vibe-coded the backup layer. An AI assistant proposed Litestream, wrote the config, and it worked on the first try. I never opened the Litestream docs, so I never learned it compacts on a 30-second timer, and I never asked what “30 days of retention” means in file count. The docs even have a cost section that calls request costs the “primary driver”, lists LIST operations for cleanup and maintenance, and says storage is “usually minimal”. That was the whole story, written down before I started.</p>
+<p>An AI writes config that works. It doesn’t own the bill, and it won’t tell you about a default it didn’t think to mention. What I do now:</p>
+<ul>
+<li><strong>Read the docs for anything that runs unattended against a paid API.</strong> At minimum the configuration reference and every default interval.</li>
+<li><strong>Ask what a setting costs over time, not just whether it works.</strong> Retention, polling and compaction intervals are cost settings, not just correctness settings.</li>
+<li><strong>Watch the first week.</strong> For any new background job that touches the cloud, check Cost Explorer by usage type after a day and after a week. Here, a single check on day two would have shown a growing curve.</li>
+<li><strong>Don’t judge a bucket by its size.</strong> Requests and data transfer can be most of the bill. Group costs by <code>USAGE_TYPE</code>, not just by service.</li>
+<li><strong>Question the architecture claim.</strong> “For pennies” was written about storage and never checked against request volume.</li>
+</ul>
+<p>The AI did what I asked. I didn’t ask enough.</p>
+<h2 id="closing-thoughts">Closing Thoughts</h2>
+<p>The expensive mistakes in a homelab aren’t the dramatic ones. They’re the quiet defaults in a tool that works perfectly, multiplied by time. My setup caught the problem the way most setups do: by accident, while I was estimating something else. Now there are four alerts and a daily report between me and the next one, and a rule that I read the docs for anything that runs while I sleep.</p>
+<h3 id="further-reading">Further Reading</h3>
+<ul>
+<li><a href="https://litestream.io/reference/config/" target="_blank" rel="noopener noreferrer">Litestream configuration reference</a>: compaction levels, snapshot retention and L0 retention</li>
+<li><a href="https://aws.amazon.com/s3/pricing/" target="_blank" rel="noopener noreferrer">Amazon S3 pricing</a>: request charges and data transfer out, including the free 100 GB</li>
+<li><a href="https://docs.aws.amazon.com/cost-management/latest/userguide/manage-ad.html" target="_blank" rel="noopener noreferrer">AWS Cost Anomaly Detection</a>: monitors, subscriptions and alert thresholds</li>
+<li><a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/budgets-managing-costs.html" target="_blank" rel="noopener noreferrer">AWS Budgets</a>: actual and forecast alerts</li>
+</ul>  </article>  </main> <footer class="border-t border-border"> <div class="max-w-2xl mx-auto px-6 py-10"> <!-- Title block grid --> <div class="grid grid-cols-2 sm:grid-cols-3 gap-px bg-border border border-border font-mono"> <!-- SITE --> <div class="p-4 bg-background"> <div class="text-[10px] tracking-[0.15em] text-muted uppercase">site</div> <div class="text-xs text-foreground mt-1 break-words">irfanadziri.dev</div> </div> <!-- ROLE --> <div class="p-4 bg-background"> <div class="text-[10px] tracking-[0.15em] text-muted uppercase">role</div> <div class="text-xs text-foreground mt-1 break-words">cloud devops & platform engineering · saas</div> </div> <!-- LOCATION --> <div class="p-4 bg-background"> <div class="text-[10px] tracking-[0.15em] text-muted uppercase">location</div> <div class="text-xs text-foreground mt-1 break-words">malaysia</div> </div> <!-- CONTACT --> <div class="p-4 bg-background"> <div class="text-[10px] tracking-[0.15em] text-muted uppercase">contact</div> <a href="mailto:works@irfanadziri.dev" class="text-xs text-foreground hover:text-accent transition-colors mt-1 block break-words">works@irfanadziri.dev</a> </div> <!-- LINKS --> <div class="p-4 bg-background"> <div class="text-[10px] tracking-[0.15em] text-muted uppercase">links</div> <div class="text-xs text-foreground mt-1"> <a href="https://github.com/irfanadziri" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors">github</a> <span class="text-muted"> · </span> <a href="https://linkedin.com/in/irfanadziri" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors">linkedin</a> </div> </div> <!-- AVAILABILITY --> <div class="p-4 bg-background"> <div class="text-[10px] tracking-[0.15em] text-muted uppercase">availability</div> <div class="text-xs text-foreground mt-1 break-words"> <span class="status-dot mr-1.5 align-[0.15em]" aria-hidden="true"></span>open to roles &amp; freelance
+</div> </div> </div> <!-- Metadata row below --> <div class="flex items-center justify-between mt-6 font-mono text-[10px] tracking-[0.15em] uppercase text-muted"> <span>© 2026 irfanadziri</span> <span>latest post 2026-11-14</span> </div> </div> </footer>  <script type="module" src="/_astro/base.astro_astro_type_script_index_0_lang.BCsDuxZr.js"></script> </body></html>  <script type="module">document.addEventListener("astro:page-load",()=>{const e=document.getElementById("article-header"),n=document.getElementById("article-header-spacer");if(e&&n){const t=()=>{n.style.height=e.offsetHeight+"px",document.documentElement.style.setProperty("--article-header-h",e.offsetHeight+"px")};t(),window.addEventListener("resize",t),document.addEventListener("astro:before-preparation",()=>{window.removeEventListener("resize",t)},{once:!0})}});</script>
