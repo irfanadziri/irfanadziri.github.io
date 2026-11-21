@@ -1,0 +1,1 @@
+import{t as e}from"./gsap.Dm7UF3sG.js";import{t}from"./gsap.C6_Nc_fx.js";import{n,r,t as i}from"./shared.DwLKR8_Z.js";function a(){let a=e.utils.toArray(`[data-m6]`).filter(r);a.length&&(e.set(a,{opacity:0,y:16}),t.batch(a,{start:`top 92%`,once:!0,onEnter:t=>e.to(t,{opacity:1,y:0,duration:i.reveal,ease:n,stagger:.08})}))}export{a as default};

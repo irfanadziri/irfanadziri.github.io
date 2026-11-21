@@ -1,0 +1,1 @@
+import{t as e}from"./gsap.C6_Nc_fx.js";import{r as t,t as n}from"./diagram.B0DYHNzK.js";import{a as r}from"./shared.DwLKR8_Z.js";function i(){r().forEach(r=>{let i=n(r),a=t(r);e.create({trigger:r,start:`top 75%`,once:!0,onEnter:()=>i?i.eventCallback(`onComplete`,()=>a.play()).play():a.play()})})}export{i as default};
